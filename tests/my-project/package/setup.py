@@ -3,8 +3,8 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='rss_miner',
-    description='An RSS feed mining tool developed for Full Fact https://fullfact.org/',
+    name='mypackage',
+    description='What is the purpose of the project?',
     author='Chris Musselle',
     author_email='chris.j.musselle@gmail.com',
     # Required for packaging source distribution from 'src' subfolder
