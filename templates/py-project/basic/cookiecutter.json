@@ -1,0 +1,8 @@
+{
+    "author": "cmusselle",
+    "project_name": "my-project",
+    "short_description": "What is the purpose of the project?",
+    "python_version": "3",
+    "python_libraries": "pandas numpy matplotlib seaborn statsmodels scikit-learn", 
+    "git_usage": ["Yes", "No"]
+}

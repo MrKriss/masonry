@@ -1,0 +1,4 @@
+.PHONY:test
+# Run tests with Pytest 
+test: 
+	pytest --verbose --cov-report term --cov={{cookiecutter.package_name}} package/tests
