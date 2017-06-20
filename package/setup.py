@@ -14,7 +14,7 @@ setup(
     # the `command_line_entry_point()` function in the `command_line` module of `mypackage`
     entry_points={
         'console_scripts': [
-            'rss-miner=rss_miner.main:cli_entry_point'
+            'mason=stonemason.main:main'
         ]
     },
     # include_package_data=True,
