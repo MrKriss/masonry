@@ -1,0 +1,14 @@
+
+{
+    "default": "basic", 
+    "dependencies": {
+        "package": ["basic"], 
+        "pytest": ["package"], 
+        "logging": ["package"], 
+        "flask": ["package"],
+        "conda-recipe": ["package", "docker"], 
+        "docker": [], 
+        "deploy": ["conda-recipe", "docker", "gitlab-ci"], 
+        "gitlab-ci": []
+    }
+}
