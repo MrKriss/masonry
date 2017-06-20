@@ -18,14 +18,16 @@ print(os.getcwd())
 scripts_dir = pathlib.Path('.').absolute() / 'scripts'
 n = 0
 for file_ in scripts_dir.glob('*.py'):
-    shutil.move(file_.as_posix(), './package/src/{{cookiecutter.package_name}}')
+    if not os.path.exists('./package/src/{{cookiecutter.package_name}}'):
+        shutil.move(file_.as_posix(), './package/src/{{cookiecutter.package_name}}')
     n += 1
 print('Moved %d .py files to package/src/{{cookiecutter.package_name}}' % n)
 
 with open('Makefile', 'a') as fout:
     with open('Makefile_postfix') as fin:
         fout.write(fin.read())
-print('Appended test build target to Maekfile')
+print('Appended test build target to Makefile')
+os.remove(fin.name)
 
 print('Commiting changes ...')
 subprocess.run(shlex.split('git add ./scripts/'))
