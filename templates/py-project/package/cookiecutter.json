@@ -1,10 +1,4 @@
 {
-    "author": "cmusselle",
-    "project_name": "my-project",
     "package_name": "mypackage",
-    "short_description": "What is the purpose of the project?",
-    "python_version": "3",
-    "python_libraries": "pandas numpy matplotlib seaborn statsmodels scikit-learn", 
-    "git_usage": ["Yes", "No"], 
     "transfer_scripts_to_package": ["Yes", "No"]
 }
