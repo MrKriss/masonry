@@ -13,6 +13,7 @@ from cookiecutter.repository import determine_repo_dir
 
 logger = logging.getLogger(__name__)
 
+
 def render_cookiecutter(
         template, checkout=None, no_input=False, extra_context=None,
         replay=False, overwrite_if_exists=False, output_dir='.',
@@ -70,7 +71,7 @@ def render_cookiecutter(
         # Add any previously rendered context variables in past templates
         for k, v in extra_context.items():
             if k not in context['cookiecutter']:
-                context['cookiecutter'][k] = v 
+                context['cookiecutter'][k] = v
 
         # prompt the user to manually configure at the command line.
         # except when 'no-input' flag is set
