@@ -46,10 +46,25 @@ def validate_args(args):
         else:
             return True
 
-    schema = Schema({
-        'TEMPLATE': And(template_path_exists, error='TEMPLATE should be subdirectory of PROJECT'),
-        'PROJECT': And(os.path.exists, error='PROJECT should exist'),
-        str: object})
+    def mason_file_exists(output):
+        mason_path = os.path.join(output, '.mason.json')
+        return os.path.exists(mason_path)
+    
+    if args['init']:
+        schema = Schema({
+            'TEMPLATE': And(template_path_exists, error='TEMPLATE should be subdirectory of PROJECT'),
+            'PROJECT': And(os.path.exists, error='PROJECT should exist'),
+            str: object})
+
+    elif args['add']:
+        schema = Schema({
+            'TEMPLATE': And(str, error='TEMPLATE should be specified'),
+            '--output': And(mason_file_exists, error='The .mason.json was not detected for project.'
+                                                     ' Specofy location with --output option.'),
+            str: object})
+
+
+
     try:
         args = schema.validate(args)
     except SchemaError as e:
