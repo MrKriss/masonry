@@ -1,10 +1,8 @@
 """Main Entry point to stonemason"""
 
-import pathlib
 
 from .cli import parse_and_validate_args
-from .initialise_project import initialise_project
-from .templates import initialise_project, add_template
+from .template import initialise_project, add_template
 
 
 def main():
@@ -30,10 +28,9 @@ def main():
 
     elif args['add']:
 
-        # Find information about the current project
-
         # Add the right template
-        add_template(args, )
+        add_template(template=args['TEMPLATE'], 
+                     project_dir=args['--output'])
 
 
 if __name__ == '__main__':
