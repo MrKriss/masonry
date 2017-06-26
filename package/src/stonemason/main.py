@@ -4,6 +4,7 @@ import pathlib
 
 from .cli import parse_and_validate_args
 from .initialise_project import initialise_project
+from .templates import initialise_project, add_template
 
 
 def main():
@@ -20,7 +21,7 @@ def main():
         else:
             project_dir = args['PROJECT']
             template = args['TEMPLATE'] if args['TEMPLATE'] else None
-            
+
         # intialise a new project based on template
         initialise_project(
             project=project_dir, 
@@ -30,7 +31,7 @@ def main():
     elif args['add']:
 
         # Find information about the current project
-    
+
         # Add the right template
         add_template(args, )
 
