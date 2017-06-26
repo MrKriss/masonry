@@ -63,4 +63,9 @@ def add_template(template, project_dir):
     with mason_vars.open('r') as f:
         project_state = json.load(f)
     
-    # TODO: project_state = 
+    # TODO: use project_state to:
+    #   Find other template options
+    #   Validate choice of template 
+    #   Work out dependencies 
+    #   Apply new templates in correct order
+    #   Resave project state
