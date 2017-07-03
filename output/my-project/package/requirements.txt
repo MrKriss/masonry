@@ -1,3 +1,6 @@
 pytest
 pytest-cov
 coverage
+pytest
+pytest-cov
+coverage
