@@ -1,5 +1,5 @@
 
-import mypackage
+import ss
 import pytest
 
 

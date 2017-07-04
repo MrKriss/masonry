@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='mypackage',
+    name='ss',
     description='What is the purpose of the project?',
     author='Chris Musselle',
     author_email='chris.j.musselle@gmail.com',
