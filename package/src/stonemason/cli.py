@@ -3,18 +3,20 @@
 A tool for working with composable project templates. 
 
 Usage:
-    mason init [-o DIR] PROJECT [TEMPLATE]
-    mason add [-o DIR] TEMPLATE
+    mason init [-o DIR] [PROJECT]
+    mason add [-o DIR] [TEMPLATE ...]
     mason (-h | --help)
     mason --version
 
 Arguments:
-  PROJECT      URL/Filepath to directory for project type. Should contain 
-               subdiectories for all templates.
+  PROJECT      URL/Filepath to directory for project type. Should contain
+               subdiectories for all templates. Can specify a project and
+               one or more templates after the directoty as in 
+               PROJECT:TEMPLATE[:TEMPLATE ...]
   TEMPLATE     Name of template directry to use from PROJECT dir
 
 Options:
-  -o DIR --output=DIR  Project directory to create/add to [default:.]
+  -o DIR --output=DIR  Project directory to create/add to [default: .]
   -h --help            Show this screen.
   --version            Show version.
 """
@@ -52,19 +54,16 @@ def validate_args(args):
     
     if args['init']:
         schema = Schema({
-            'TEMPLATE': And(template_path_exists, error='TEMPLATE should be subdirectory of PROJECT'),
-            'PROJECT': And(os.path.exists, error='PROJECT should exist'),
+            # 'TEMPLATE': And(template_path_exists, error='TEMPLATE should be subdirectory of PROJECT'),
+            # 'PROJECT': And(os.path.exists, error='PROJECT should exist'),
             str: object})
 
     elif args['add']:
         schema = Schema({
-            'TEMPLATE': And(str, error='TEMPLATE should be specified'),
-            '--output': And(mason_file_exists, error='The .mason.json was not detected for project.'
-                                                     ' Specofy location with --output option.'),
+            # 'TEMPLATE': And(str, error='TEMPLATE should be specified'),
+            # '--output': And(mason_file_exists, error='The .mason.json was not detected for project.'
+            #                                          ' Specofy location with --output option.'),
             str: object})
-
-
-
     try:
         args = schema.validate(args)
     except SchemaError as e:

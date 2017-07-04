@@ -1,8 +1,12 @@
 """Main Entry point to stonemason"""
 
-
 from .cli import parse_and_validate_args
 from .template import initialise_project, add_template
+from .utils import load_application_data
+from .prompt import prompt_init_project, prompt_add_template
+
+import json
+from pathlib import Path
 
 
 def main():
@@ -11,25 +15,54 @@ def main():
     args = parse_and_validate_args()
     print(args)
 
+    project_templates = load_application_data()
+
     if args['init']:
 
-        # Split project argument to project and template if needed
-        if ':' in args['PROJECT'] and not args['TEMPLATE']:
-            project_dir, template = args['PROJECT'].split(':')
+        template = None
+
+        # Get project
+        if not args['PROJECT']:
+            if project_templates:
+                # Launch inquire
+                project_dir = prompt_init_project(project_templates)
+            else:
+                raise ValueError("No known projects to choose from. "
+                                 "Add one using the PROJECT argument.")
+        elif ':' in args['PROJECT']:
+            # Split project argument to project and templates list if needed
+            project_dir, template = args['PROJECT'].split(':', maxsplit=1)
+            # templates = templates.split(':')
         else:
             project_dir = args['PROJECT']
-            template = args['TEMPLATE'] if args['TEMPLATE'] else None
 
         # intialise a new project based on template
         initialise_project(
-            project=project_dir, 
-            template=template, 
+            project=project_dir,
+            template=template,
             output_dir=args['--output'])
 
     elif args['add']:
 
+        project_dir = Path(args['--output'])
+
+        # Load existing state information
+        mason_vars = project_dir / '.mason.json'
+        with mason_vars.open('r') as f:
+            project_state = json.load(f)
+
+        project_templates_root = project_templates[project_state['project']]
+
+        print(project_templates_root)
+        print(project_state)
+
+        # Get project template options 
+        if not args['TEMPLATE']:
+            # inquire which template to use
+            args['TEMPLATE'] = prompt_add_template(project_templates_root, project_state)
+
         # Add the right template
-        add_template(template=args['TEMPLATE'], 
+        add_template(templates=args['TEMPLATE'],
                      project_dir=args['--output'])
 
 
