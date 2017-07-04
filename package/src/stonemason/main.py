@@ -53,9 +53,6 @@ def main():
 
         project_templates_root = project_templates[project_state['project']]
 
-        print(project_templates_root)
-        print(project_state)
-
         # Get project template options 
         if not args['TEMPLATE']:
             # inquire which template to use
