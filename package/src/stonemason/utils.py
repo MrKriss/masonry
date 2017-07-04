@@ -1,6 +1,9 @@
 
 
 import os 
+from pathlib import Path
+
+import json
 
 
 def postfix(original_file, new_file):
@@ -21,3 +24,28 @@ def prefix(original_file, new_file):
     os.remove(fin.name)
     os.rename(fout.name, fin.name)
 
+
+def load_application_data():
+    """Return the stored application data on where templates live"""
+
+    app_data_dir = Path(os.path.join(os.getenv("HOME"), ".stonemason"))
+
+    template_metadata_path = app_data_dir / "templates.json" 
+
+    if template_metadata_path.exists():
+        obj = json.loads(template_metadata_path.read_text())
+    else:
+        obj = {}
+
+    return obj
+
+
+def save_application_data(obj):
+    """Save application data on where templates live"""
+
+    app_data_dir = Path(os.path.join(os.getenv("HOME"), ".stonemason"))
+    app_data_dir.mkdir(exist_ok=True)
+    
+    template_metadata_path = app_data_dir / "templates.json"
+
+    json.dump(obj, template_metadata_path.open('w'))
