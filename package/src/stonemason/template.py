@@ -7,12 +7,15 @@ from .resolution import create_dependency_graph, resolve
 from .render import render_cookiecutter
 from .utils import load_application_data, save_application_data
 
+from.prompt import prompt_cookiecutter_variables
+
+
 from clint.textui import prompt, puts, colored, validators
 
 
 def initialise_project(project, template=None, output_dir='.'):
 
-    # Initialise path variables 
+    # Initialise path variables
     project_path = Path(project).resolve()
     meta_data_path = project_path / 'metadata.json'
     project_templates = load_application_data()
@@ -59,9 +62,11 @@ def initialise_project(project, template=None, output_dir='.'):
     # Cycle through templates and render them
     for name in template_order:
         template = template_paths[name].as_posix()
+        context_variables = prompt_cookiecutter_variables(template, project_state['variables'])
+
         project_dir, content = render_cookiecutter(
-            template,
-            extra_context=project_state['variables'],
+            template, no_input=True,
+            extra_context=context_variables,
             output_dir=output_dir, overwrite_if_exists=True,
         )
 
@@ -123,8 +128,11 @@ def add_template(templates, project_dir, output_dir='.'):
 
         for name in order_set:
             template = remaining_template_paths[name].as_posix()
+            context_variables = prompt_cookiecutter_variables(template, project_state['variables'])
+            project_state['variables'].update(context_variables)
+
             output_project_dir, content = render_cookiecutter(
-                template, 
+                template, no_input=True,
                 extra_context=project_state['variables'],
                 output_dir=project_dir.parent, overwrite_if_exists=True,
             )

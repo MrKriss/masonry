@@ -1,6 +1,7 @@
 import inquirer
 
 from pathlib import Path
+import json
 
 
 def prompt_init_project(project_templates):
@@ -49,8 +50,44 @@ def prompt_add_template(project_template_root, project_state):
 
     answers = inquirer.prompt(questions)
 
-    print(answers)
-
     templates = answers['templates']
 
     return templates
+
+
+def prompt_cookiecutter_variables(template, context_variables):
+
+    template_path = Path(template)
+    cookiecutter_vars_path = template_path / "cookiecutter.json"
+
+    with cookiecutter_vars_path.open() as f:
+        cookiecutter_vars = json.load(f)
+
+    current_variables = list(context_variables.keys())
+
+    # Construct list of questions for variables without a value
+    questions = []
+    for key, value in cookiecutter_vars.items():
+
+        if key not in current_variables:
+
+            var_name = key.replace("_", " ").title()
+            
+            if isinstance(value, (str, int, float, bool)):
+                questions.append(
+                    inquirer.Text(key, 
+                                  message=f"Please specify '{var_name}'",
+                                  default=value)
+                )
+            elif isinstance(value, list):            
+                questions.append(
+                    inquirer.List(key, 
+                                  message=f"Please specify '{var_name}'",
+                                  default=value[0], 
+                                  choices=value)
+                )
+
+    answers = inquirer.prompt(questions)
+
+    return answers
+
