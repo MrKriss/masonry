@@ -16,9 +16,12 @@ def create_dependency_graph(filename, node_list):
     """ Return a dictionary of Node instances representing the Dependency Graph """
 
     meta_data = json.load(open(filename))
+    default_template = meta_data["default"]
 
     # Initialise nodes from passed in node_list names
     nodes = {n: Node(n) for n in node_list}
+    if default_template not in nodes:
+        nodes[default_template] = Node(default_template) 
 
     # Add in edges if dependencies are listed in the meta_data
     for k, v in nodes.items():
@@ -31,7 +34,7 @@ def create_dependency_graph(filename, node_list):
 
 
 def resolve(node, resolved=None, seen=None):
-    """Graph dependency resolution algorithm 
+    """Graph dependency resolution algorithm
 
     Parameters
     ----------
