@@ -1,0 +1,31 @@
+
+Documentation:
+    ☐ Update README with project description 
+    ☐ Update README with motivation
+    ☐ Update README with Quick start guide
+    ☐ Update README with features guide
+
+Features:
+    UI:
+        ☐ Helpful messages when no project / template to choose from
+    Validation:
+        ☐ Review input checks with schema 
+
+Tests:
+    init command:
+        ☐ Test works without specifying project
+        ☐ Test works with specifying project 
+        ☐ Test works with specifying project and starting template
+
+    add command:
+        ☐ Test works without specifying template
+        ☐ Test works specifying template
+        ☐ Test works specifying multiple template
+
+Templates to add to examples:
+    ☐ logging
+    ☐ flask
+    ☐ cli
+    ☐ constructor
+    ☐ docker
+    ☐ conda package
