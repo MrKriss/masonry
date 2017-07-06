@@ -78,7 +78,7 @@ def initialise_project(project, template=None, output_dir='.'):
         project_state['project'] = project_path.name
 
     # Save state of project variables
-    mason_vars = Path(project_dir) / '.mason.json'
+    mason_vars = Path(project_dir) / '.mason'
     with mason_vars.open('w') as f:
         json.dump(project_state, f)
 
@@ -89,7 +89,7 @@ def add_template(templates, project_dir, output_dir='.'):
     project_dir = Path(project_dir).resolve()
 
     # Load existing state information
-    mason_vars = project_dir / '.mason.json'
+    mason_vars = project_dir / '.mason'
     with mason_vars.open('r') as f:
         project_state = json.load(f)
 

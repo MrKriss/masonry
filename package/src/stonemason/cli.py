@@ -49,7 +49,7 @@ def validate_args(args):
             return True
 
     def mason_file_exists(output):
-        mason_path = os.path.join(output, '.mason.json')
+        mason_path = os.path.join(output, '.mason')
         return os.path.exists(mason_path)
     
     if args['init']:
@@ -61,7 +61,7 @@ def validate_args(args):
     elif args['add']:
         schema = Schema({
             # 'TEMPLATE': And(str, error='TEMPLATE should be specified'),
-            # '--output': And(mason_file_exists, error='The .mason.json was not detected for project.'
+            # '--output': And(mason_file_exists, error='The .mason was not detected for project.'
             #                                          ' Specofy location with --output option.'),
             str: object})
     try:

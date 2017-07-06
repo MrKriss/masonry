@@ -47,7 +47,7 @@ def main():
         project_dir = Path(args['--output'])
 
         # Load existing state information
-        mason_vars = project_dir / '.mason.json'
+        mason_vars = project_dir / '.mason'
         with mason_vars.open('r') as f:
             project_state = json.load(f)
 
