@@ -13,7 +13,3 @@ load:
 remove: 
 	conda env remove -n my-project -f environment.yml
 
-.PHONY:test
-# Run tests with Pytest 
-test: 
-	pytest --verbose --cov-report term --cov=mypackage package/tests
