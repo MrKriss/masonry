@@ -3,13 +3,13 @@ from pathlib import Path
 import json
 import sys
 
+import git
+
 from .resolution import create_dependency_graph, resolve
 from .render import render_cookiecutter
 from .utils import load_application_data, save_application_data
 
 from.prompt import prompt_cookiecutter_variables
-
-
 from clint.textui import prompt, puts, colored, validators
 
 
@@ -59,6 +59,7 @@ def initialise_project(project, template=None, output_dir='.'):
     project_state['templates'] = []
     project_state['variables'] = {}
 
+
     # Cycle through templates and render them
     for name in template_order:
         template = template_paths[name].as_posix()
@@ -70,6 +71,12 @@ def initialise_project(project, template=None, output_dir='.'):
             output_dir=output_dir, overwrite_if_exists=True,
         )
 
+        if not (Path(project_dir) / '.git').exists() and 'repo' not in vars():
+            # Initialise git repo 
+            repo = git.Repo.init(project_dir)
+        else:
+            repo = git.Repo(project_dir)
+
         puts(f'Rendered: {template}')
 
         # Save state
@@ -77,16 +84,23 @@ def initialise_project(project, template=None, output_dir='.'):
         project_state['templates'].append(name)
         project_state['project'] = project_path.name
 
-    # Save state of project variables
-    mason_vars = Path(project_dir) / '.mason'
-    with mason_vars.open('w') as f:
-        json.dump(project_state, f)
+        # Save state of project variables
+        mason_vars = Path(project_dir) / '.mason'
+        with mason_vars.open('w') as f:
+            json.dump(project_state, f)
 
-
+        # Commit template layer to git repo
+        all_files = [p.as_posix() for p in Path(project_dir).iterdir() if p.is_file]
+        repo.index.add(all_files)
+        repo.index.commit(f"Add '{name}' template layer via stone mason.")
+    
+    
 def add_template(templates, project_dir, output_dir='.'):
     """ Add a template to an existing project """
 
     project_dir = Path(project_dir).resolve()
+    output_dir = Path(output_dir).resolve()
+    repo = git.Repo(output_dir.as_posix())
 
     # Load existing state information
     mason_vars = project_dir / '.mason'
@@ -142,6 +156,11 @@ def add_template(templates, project_dir, output_dir='.'):
             project_state['variables'].update(content)
             project_state['templates'].append(name)
 
-    # Save state of project variables
-    with mason_vars.open('w') as f:
-        json.dump(project_state, f)
+            # Save state of project variables
+            with mason_vars.open('w') as f:
+                json.dump(project_state, f)
+
+            # Commit template layer to git repo
+            all_files = [p.as_posix() for p in output_project_dir.iterdir() if p.is_file]
+            repo.index.add(all_files)
+            repo.index.commit(f"Add '{template}' template layer via stone mason.")
