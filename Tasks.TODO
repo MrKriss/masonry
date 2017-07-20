@@ -9,7 +9,11 @@ Features:
     UI:
         ☐ Helpful messages when no project / template to choose from
     Validation:
-        ☐ Review input checks with schema 
+        ☐ Review input checks with schema
+    Templates:
+        ☐ Add pre and post fix hooks as standard
+        ☐ Add ability to insert before or after main code body in python filess
+        ✔ Add git commiting after each layer by default @done (7/21/2017, 12:13:25 AM)
 
 Tests:
     init command:
@@ -22,10 +26,18 @@ Tests:
         ☐ Test works specifying template
         ☐ Test works specifying multiple template
 
+    template:
+        ☐ Test each template can be rendered in its own right
+
+    git commiting:
+        ☐ Test works with init, and initing non base template
+        ☐ Test works adding a template and adding multiple templates in order
+
 Templates to add to examples:
     ☐ logging
     ☐ flask
     ☐ cli
     ☐ constructor
     ☐ docker
-    ☐ conda package
+    ✔ conda package @done (7/18/2017, 10:43:01 PM)
+    ☐ gitlab-ci
