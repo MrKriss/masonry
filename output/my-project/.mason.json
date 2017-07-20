@@ -1,0 +1,1 @@
+{"templates": ["basic"], "variables": {"author": "cmusselle", "project_name": "my-project", "short_description": "What is the purpose of the project?", "python_version": "3", "python_libraries": " ", "git_usage": "Yes", "_template": "/Users/cmusselle/Mango/Workspace/stone-mason/templates/py-project/basic"}, "project": "py-project"}
