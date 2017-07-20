@@ -1,4 +1,4 @@
 {
-    "package_name": "mypackage",
-    "transfer_scripts_to_package": ["Yes", "No"]
+    "project_name": "mypproject",
+    "package_name": "mypackage"
 }
