@@ -1,0 +1,4 @@
+{% set lib_list = cookiecutter.python_libraries.split(' ') %}
+{%- for lib in lib_list -%}
+{{ lib }}
+{% endfor %}

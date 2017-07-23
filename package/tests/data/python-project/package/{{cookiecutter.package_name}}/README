@@ -1,0 +1,5 @@
+# {{ cookiecutter.package_name }}
+
+**Author:** {{ cookiecutter.author }}
+
+{{ cookiecutter.short_description }}

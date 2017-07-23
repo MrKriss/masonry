@@ -1,0 +1,9 @@
+{
+    "author": "Joe Blogs",
+    "email": "a@b.co.uk",
+    "package_name": "testpackage",
+    "short_description": "A basic test example package",
+    "python_version": "3",
+    "python_libraries": "requests logzero",
+    "git_usage": ["Yes", "No"]
+}
