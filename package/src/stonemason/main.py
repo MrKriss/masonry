@@ -9,10 +9,10 @@ import json
 from pathlib import Path
 
 
-def main():
+def main(args=None):
 
     # Read in Arguments
-    args = parse_and_validate_args()
+    args = parse_and_validate_args(args)
     print(args)
 
     project_templates = load_application_data()
