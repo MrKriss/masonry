@@ -1,0 +1,3 @@
+{% for lib in cookiecutter.python_libraries %}
+{{ lib }}
+{% endfor %}
