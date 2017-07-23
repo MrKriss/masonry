@@ -23,6 +23,7 @@ Options:
 """
 import os
 from sys import exit
+from pathlib import Path
 
 from docopt import docopt
 
@@ -71,7 +72,26 @@ def validate_args(args):
         exit(e)
 
 
-def parse_and_validate_args():
-    args = parse_args()
-    validate_args(args)
-    return args
+def parse_and_validate_args(argv):
+    parsed_args = parse_args(argv)
+    validate_args(parsed_args)
+    return parsed_args
+
+
+def parse_project_argument(arg):
+
+    template = None
+
+    # See if template directroy or project directory was specified
+    project_argument = Path(arg).resolve()
+    project_metadata = project_argument / 'metadata.json'
+
+    if project_metadata.exists():
+        project_dir = arg
+
+    elif (project_argument.parent / 'metadata.json').exists():
+        # Check parent directory and use sub directory as template
+        project_dir = project_argument.parent.as_posix()
+        template = project_argument.name
+
+    return project_dir, template
