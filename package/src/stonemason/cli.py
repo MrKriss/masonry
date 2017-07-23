@@ -10,10 +10,11 @@ Usage:
 
 Arguments:
   PROJECT      URL/Filepath to directory for project type. Should contain
-               subdiectories for all templates. Can specify a project and
-               one or more templates after the directoty as in 
-               PROJECT:TEMPLATE[:TEMPLATE ...]
-  TEMPLATE     Name of template directry to use from PROJECT dir
+               subdiectories for all templates and a metadata.json file.
+               Can also specify a template subdirectory, and if so, this
+               is used as the template instead of the default for the project.
+
+  TEMPLATE     Name of one or more templates to add to an existing project.
 
 Options:
   -o DIR --output=DIR  Project directory to create/add to [default: .]
