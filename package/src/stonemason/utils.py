@@ -25,12 +25,15 @@ def prefix(original_file, new_file):
     os.rename(fout.name, fin.name)
 
 
-def load_application_data():
+def load_application_data(location=None):
     """Return the stored application data on where templates live"""
 
-    app_data_dir = Path(os.path.join(os.getenv("HOME"), ".stonemason"))
+    if not location:
+        location = os.getenv("HOME")
 
-    template_metadata_path = app_data_dir / "templates.json" 
+    app_data_dir = Path(os.path.join(location, ".stonemason"))
+
+    template_metadata_path = app_data_dir / "templates.json"
 
     if template_metadata_path.exists():
         obj = json.loads(template_metadata_path.read_text())
@@ -40,10 +43,13 @@ def load_application_data():
     return obj
 
 
-def save_application_data(obj):
+def save_application_data(obj, location=None):
     """Save application data on where templates live"""
 
-    app_data_dir = Path(os.path.join(os.getenv("HOME"), ".stonemason"))
+    if not location:
+        location = os.getenv("HOME")
+
+    app_data_dir = Path(os.path.join(location, ".stonemason"))
     app_data_dir.mkdir(exist_ok=True)
     
     template_metadata_path = app_data_dir / "templates.json"
