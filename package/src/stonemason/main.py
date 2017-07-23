@@ -1,10 +1,11 @@
 """Main Entry point to stonemason"""
 
-from .cli import parse_and_validate_args
+from .cli import parse_and_validate_args, parse_project_argument
 from .template import initialise_project, add_template
 from .utils import load_application_data
 from .prompt import prompt_init_project, prompt_add_template
 
+import os
 import json
 from pathlib import Path
 
@@ -28,13 +29,9 @@ def main(args=None):
                 project_dir = prompt_init_project(project_templates)
             else:
                 raise ValueError("No known projects to choose from. "
-                                 "Add one using the PROJECT argument.")
-        elif ':' in args['PROJECT']:
-            # Split project argument to project and templates list if needed
-            project_dir, template = args['PROJECT'].split(':', maxsplit=1)
-            # templates = templates.split(':')
+                                 "Add one using the PROJECT argument.")        
         else:
-            project_dir = args['PROJECT']
+            project_dir, template = parse_project_argument(args['PROJECT'])
 
         # intialise a new project based on template
         initialise_project(
