@@ -29,6 +29,7 @@ def test_foo_does_y():
 
 # Fixtures
 # -----------------------------------------------------------
+# Run `pytest -q --fixtures` to see a list of all builtin fixtures
 
 # import pytest
 
