@@ -72,18 +72,18 @@ def prompt_cookiecutter_variables(template, context_variables):
         if key not in current_variables:
 
             var_name = key.replace("_", " ").title()
-            
+
             if isinstance(value, (str, int, float, bool)):
                 questions.append(
-                    inquirer.Text(key, 
+                    inquirer.Text(key,
                                   message=f"Please specify '{var_name}'",
                                   default=value)
                 )
-            elif isinstance(value, list):            
+            elif isinstance(value, list):
                 questions.append(
-                    inquirer.List(key, 
+                    inquirer.List(key,
                                   message=f"Please specify '{var_name}'",
-                                  default=value[0], 
+                                  default=value[0],
                                   choices=value)
                 )
 
