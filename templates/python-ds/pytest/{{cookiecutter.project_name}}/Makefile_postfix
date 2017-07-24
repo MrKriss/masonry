@@ -2,3 +2,8 @@
 # Run tests with Pytest 
 test: 
 	pytest --verbose --cov-report term --cov={{cookiecutter.package_name}} package/tests
+
+.PHONY:debug
+# Run tests with Pytest with debug on 
+debug: 
+	pytest --verbose -s --pudb --cov-report term --cov={{cookiecutter.package_name}} package/tests
