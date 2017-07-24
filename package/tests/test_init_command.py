@@ -4,30 +4,10 @@ import pytest
 import git
 import json
 
-
-TEST_DIR = Path(__file__).parent
-
-@pytest.fixture(autouse=True)
-def no_prompts(monkeypatch):
-
-    import stonemason.prompt
-
-    def mock_prompt_cookiecutter_variables(template, context_variables):
-
-        template_path = Path(template)
-        cookiecutter_vars_path = template_path / "cookiecutter.json"
-
-        with cookiecutter_vars_path.open() as f:
-            cookiecutter_vars = json.load(f)
-
-        return cookiecutter_vars
-
-    # Mock the interactive input and use cookiecutter defaults instead
-    monkeypatch.setattr(stonemason.prompt, 'prompt_cookiecutter_variables',
-                        mock_prompt_cookiecutter_variables)
+from conftest import TEST_DIR
 
 
-def test_init_with_project(tmpdir, no_prompts):
+def test_init_with_project(tmpdir):
 
     output_path = Path(tmpdir.strpath)
 
