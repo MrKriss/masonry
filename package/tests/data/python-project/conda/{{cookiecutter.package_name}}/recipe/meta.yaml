@@ -1,0 +1,44 @@
+package:
+  name: {{cookiecutter.package_name}}
+  version: {% raw %}"{{ GIT_DESCRIBE_TAG }}"{% endraw %} 
+
+build:
+  noarch: python
+  number: {% raw %}"{{ GIT_DESCRIBE_NUMBER }}"{% endraw %}
+  string: {% raw %}"{{ GIT_BUILD_STR }}"{% endraw %}
+{%- if cookiecutter.entry_point_name != "" %}
+  entry_points:
+     - {{cookiecutter.entry_point_name}} = {{cookiecutter.package_name}}.main:main
+{%- endif %}
+
+source:
+  path: ../
+
+requirements:
+  build:
+    - python >=3.6.0
+    - setuptools_scm >=1.15.0
+
+  run:
+    - python >=3.6.0
+
+test:
+  source_files: 
+   - package/tests/data/*
+   - package/tests/test_*.py
+
+  requires: 
+    - pytest >=3.0.7
+    - pytest-cov >=2.3.1
+
+{% if cookiecutter.entry_point_name != "" -%}
+  commands:
+    - {{cookiecutter.entry_point_name}} -h 
+{%- endif %}
+
+  # A file called run_test.py is also included in the recipe that will be run
+  # at test time.
+
+# See
+# http://docs.continuum.io/conda/build.html for
+# more information about meta.yaml
