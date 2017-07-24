@@ -1,13 +1,12 @@
 package:
   name: {{cookiecutter.package_name}}
-  version: {{ GIT_DESCRIBE_TAG }} # {{ environ.get('CI_BUILD_TAG', '0.0.0') }}
+  version: {% raw %}"{{ GIT_DESCRIBE_TAG }}"{% endraw %} 
 
 build:
   noarch: python
-  number: {{ GIT_DESCRIBE_NUMBER }} # {{ environ.get('CI_BUILD_ID', 0) }}
-  string: {{ GIT_BUILD_STR }}
-  cookiecutter.package_name
-{% if cookiecutter.entry_point_name != "" -%}
+  number: {% raw %}"{{ GIT_DESCRIBE_NUMBER }}"{% endraw %}
+  string: {% raw %}"{{ GIT_BUILD_STR }}"{% endraw %}
+{%- if cookiecutter.entry_point_name != "" %}
   entry_points:
      - {{cookiecutter.entry_point_name}} = {{cookiecutter.package_name}}.main:main
 {%- endif %}
