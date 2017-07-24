@@ -16,4 +16,9 @@ remove:
 .PHONY:test
 # Run tests with Pytest 
 test: 
-	pytest --verbose -s --cov-report term --cov=stonemason --ignore=package/tests/data/ package/tests/ 
+	pytest --verbose --cov-report term --cov=stonemason --ignore=package/tests/data/ package/tests/ 
+
+.PHONY:debug
+# Run tests with Pytest 
+debug: 
+	pytest --verbose -s --pudb --cov-report term --cov=stonemason --ignore=package/tests/data/ package/tests/ 
