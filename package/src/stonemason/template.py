@@ -95,12 +95,11 @@ def initialise_project(project, template=None, output_dir='.'):
         repo.index.commit(f"Add '{name}' template layer via stone mason.")
     
     
-def add_template(templates, project_dir, output_dir='.'):
+def add_template(templates, project_dir):
     """ Add a template to an existing project """
 
     project_dir = Path(project_dir).resolve()
-    output_dir = Path(output_dir).resolve()
-    repo = git.Repo(output_dir.as_posix())
+    repo = git.Repo(project_dir.as_posix())
 
     # Load existing state information
     mason_vars = project_dir / '.mason'
@@ -112,7 +111,7 @@ def add_template(templates, project_dir, output_dir='.'):
     project_root = Path(project_template_data[project_state['project']])
 
     # Find remaining templates that can be applied
-    previous_templates = project_state['templates']  
+    previous_templates = project_state['templates']
     paths = project_root.iterdir()
     remaining_template_paths = {
         p.name: p for p in paths if p.is_dir() and p.name not in previous_templates
@@ -160,7 +159,8 @@ def add_template(templates, project_dir, output_dir='.'):
             with mason_vars.open('w') as f:
                 json.dump(project_state, f)
 
-            # Commit template layer to git repo
-            all_files = [p.as_posix() for p in output_project_dir.iterdir() if p.is_file]
-            repo.index.add(all_files)
-            repo.index.commit(f"Add '{template}' template layer via stone mason.")
+            output_project_dir = Path(output_project_dir)
+
+            # Commit template layer to git repo            
+            repo.git.add(output_project_dir.as_posix(), force=False)
+            repo.index.commit(f"Add '{name}' template layer via stone mason.")
