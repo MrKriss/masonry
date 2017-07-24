@@ -17,21 +17,21 @@ Features:
 
 Tests:
     init command:
-        ☐ Test works without specifying project
-        ✔ Test works with specifying project @done (7/23/2017, 6:12:23 PM)
-        ✔ Test works with specifying project and starting template @done (7/23/2017, 6:38:12 PM)
+        ☐ Test without specifying project
+        ✔ Test with specifying project @done (7/23/2017, 6:12:23 PM)
+        ✔ Test with specifying project and starting template @done (7/23/2017, 6:38:12 PM)
 
     add command:
-        ☐ Test works without specifying template
-        ☐ Test works specifying template
-        ☐ Test works specifying multiple template
+        ☐ Test without specifying template
+        ✔ Test specifying template @done (7/24/2017, 7:03:05 PM)
+        ✔ Test specifying multiple template @done (7/24/2017, 11:58:58 PM)
 
     template:
         ☐ Test each template can be rendered in its own right
 
     git commiting:
-        ✔ Test works with init, and initing non base template @done (7/23/2017, 7:01:04 PM)
-        ☐ Test works adding a template and adding multiple templates in order
+        ✔ Test with init, and initing non base template @done (7/23/2017, 7:01:04 PM)
+        ✔ Test adding a template and adding multiple templates in order @done (7/24/2017, 11:59:08 PM)
 
 Templates to add to examples:
     ☐ logging
