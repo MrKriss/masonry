@@ -1,6 +1,0 @@
-{
-    "default": "package", 
-    "dependencies": {
-        "pytest": ["package"]
-    }
-}
