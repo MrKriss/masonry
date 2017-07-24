@@ -113,18 +113,17 @@ def add_template(templates, project_dir):
     # Find remaining templates that can be applied
     previous_templates = project_state['templates']
     paths = project_root.iterdir()
-    remaining_template_paths = {
-        p.name: p for p in paths if p.is_dir() and p.name not in previous_templates
-    }
-    remaining_templates_names = list(remaining_template_paths.keys())
-    remaining_templates_names.sort()
+    template_paths = {p.name: p for p in paths if p.is_dir()}
+
+    templates_names = list(template_paths.keys())
+    templates_names.sort()
 
     for t in templates:
-        assert t in remaining_template_paths, f'{t} not in remaining templates'
+        assert t in templates_names, f'{t} not in templates for this type of project'
 
     # Create graph of template dependencies
     g = create_dependency_graph(project_root / 'metadata.json',
-                                node_list=remaining_templates_names)
+                                node_list=templates_names)
 
     # Resolve dependencies for specified template
     template_orders = []
@@ -140,7 +139,7 @@ def add_template(templates, project_dir):
     for order_set in template_orders:
 
         for name in order_set:
-            template = remaining_template_paths[name].as_posix()
+            template = template_paths[name].as_posix()
             context_variables = prompt_cookiecutter_variables(template, project_state['variables'])
             project_state['variables'].update(context_variables)
 
