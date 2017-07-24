@@ -32,7 +32,7 @@ def init_base_project(tmpdir_factory):
     return project_dir
 
 
-def test_add_works_with_initialised_project(init_base_project):
+def test_adding_single_project(init_base_project):
 
     current_project_path = Path(init_base_project)
 
@@ -74,3 +74,53 @@ def test_add_works_with_initialised_project(init_base_project):
     assert len(log) == 2
     assert "Add 'pytest' template layer via stone mason." in log[0]
     assert "Add 'package' template layer via stone mason." in log[1]
+
+
+def test_adding_multiple_projects(init_base_project):
+
+    current_project_path = Path(init_base_project)
+
+    # Set arguments
+    args = f"add -o {current_project_path.as_posix()} conda"
+
+    from stonemason import main
+    # Run from entry point
+    main.main(args=args)
+
+    # Check files were created
+    files = [
+        '.git/',
+        '.mason',
+        'MANIFEST.in',
+        'README',
+        'requirements.txt',
+        'setup.py',
+        'src/testpackage',
+        'src/testpackage/__init__.py',
+        'src/testpackage/main.py',
+        'tests/test_foo.py', 
+        'recipe/build.bat',
+        'recipe/build.sh', 
+        'recipe/run_test.py', 
+        'recipe/meta.yaml'
+    ]
+    for f in files:
+        p = current_project_path / f
+        assert p.exists()
+
+    # Check requirements were polulated
+    target = "requests\nlogzero\npytest\npytest-cov\ncoverage\n"
+    req_file = current_project_path / 'requirements.txt'
+    text = req_file.read_text()
+
+    assert text == target
+
+    # Check git repo was created and commits made
+    repo_dir = current_project_path 
+    r = git.Repo(repo_dir.as_posix())
+    log = r.git.log(pretty='oneline').split('\n')
+    assert len(log) == 3
+    assert "Add 'conda' template layer via stone mason." in log[0]
+    assert "Add 'pytest' template layer via stone mason." in log[1]
+    assert "Add 'package' template layer via stone mason." in log[2]
+
