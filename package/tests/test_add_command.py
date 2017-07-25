@@ -60,12 +60,19 @@ def test_adding_single_project(init_base_project):
         p = current_project_path / f
         assert p.exists()
 
-    # Check requirements were polulated
+    # Check requirements were postfixed
     target = "requests\nlogzero\npytest\npytest-cov\ncoverage\n"
     req_file = current_project_path / 'requirements.txt'
-    text = req_file.read_text()
+    result = req_file.read_text()
 
-    assert text == target
+    assert result == target
+
+    # Check MANIFEST was prefixed
+    target = "graft tests\ngraft src\n"
+    manifest_file = current_project_path / 'MANIFEST.in'
+    result = manifest_file.read_text()
+
+    assert result == target
 
     # Check git repo was created and commits made
     repo_dir = current_project_path 
@@ -111,9 +118,16 @@ def test_adding_multiple_projects(init_base_project):
     # Check requirements were polulated
     target = "requests\nlogzero\npytest\npytest-cov\ncoverage\n"
     req_file = current_project_path / 'requirements.txt'
-    text = req_file.read_text()
+    result = req_file.read_text()
 
-    assert text == target
+    assert result == target
+
+    # Check MANIFEST was prefixed
+    target = "graft tests\ngraft src\n"
+    manifest_file = current_project_path / 'MANIFEST.in'
+    result = manifest_file.read_text()
+
+    assert result == target
 
     # Check git repo was created and commits made
     repo_dir = current_project_path 

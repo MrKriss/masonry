@@ -38,8 +38,8 @@ def test_init_with_project(tmpdir):
     # Check requirements were polulated
     target = "requests\nlogzero\n"
     req_file = output_path / package_name / 'requirements.txt'
-    text = req_file.read_text()
-    assert text == target
+    result = req_file.read_text()
+    assert result == target
 
     # Check git repo was created and commits made
     repo_dir = output_path / package_name
@@ -81,9 +81,16 @@ def test_init_with_project_and_template(tmpdir, no_prompts):
     # Check requirements were polulated
     target = "requests\nlogzero\npytest\npytest-cov\ncoverage\n"
     req_file = output_path / package_name / 'requirements.txt'
-    text = req_file.read_text()
+    result = req_file.read_text()
 
-    assert text == target
+    assert result == target
+
+    # Check MANIFEST was prefixed
+    target = "graft tests\ngraft src\n"
+    manifest_file = output_path / package_name / 'MANIFEST.in'
+    result = manifest_file.read_text()
+
+    assert result == target
 
     # Check git repo was created and commits made
     repo_dir = output_path / package_name
