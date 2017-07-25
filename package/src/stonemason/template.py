@@ -8,6 +8,7 @@ import git
 from .resolution import create_dependency_graph, resolve
 from .render import render_cookiecutter
 from .utils import load_application_data, save_application_data
+from .postprocess import combine_file_snippets
 
 from.prompt import prompt_cookiecutter_variables
 from clint.textui import prompt, puts, colored, validators
@@ -70,6 +71,11 @@ def initialise_project(project, template=None, output_dir='.'):
             extra_context=context_variables,
             output_dir=output_dir, overwrite_if_exists=True,
         )
+
+        # This combines any prefix/postfix files added by the template to the originally named file
+        # e.g. the cntent of 'Makefile_postfix' with be added to the end of the file 'Makefile',
+        # and the cntent of 'MANIFEST_pretfix.in' with be added to the start of the file 'MANIFEST.in' 
+        combine_file_snippets(project_dir)
 
         if not (Path(project_dir) / '.git').exists() and 'repo' not in vars():
             # Initialise git repo 
@@ -149,6 +155,11 @@ def add_template(templates, project_dir):
                 output_dir=project_dir.parent, overwrite_if_exists=True,
             )
             puts(f'Rendered: {template}')
+
+            # This combines any prefix/postfix files added by the template to the originally named file
+            # e.g. the cntent of 'Makefile_postfix' with be added to the end of the file 'Makefile',
+            # and the cntent of 'MANIFEST_pretfix.in' with be added to the start of the file 'MANIFEST.in' 
+            combine_file_snippets(output_project_dir)
 
             # Save state
             project_state['variables'].update(content)
