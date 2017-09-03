@@ -4,16 +4,14 @@ language: python
 sudo: false
 
 python:
-  - 2.7
-  - 3.5
   - 3.6
 
 env:
   global:
     # List package dependencies for conda
-    - CONDA_DEPS="cookiecutter ruamel_yaml docopt gitpython clint pytest pytest-cov coverage"
+    - CONDA_DEPS="cookiecutter docopt gitpython clint pytest pytest-cov coverage"
     # List package dependencies for pip 
-    - PIP_DEPS = "inquirer"
+    - PIP_DEPS="inquirer schema ruamel.yaml"
     # package name for test invocation
     - PACKAGENAME="stonemason"
 
@@ -29,12 +27,14 @@ before_install:
 - conda info -a
 - conda create -n testenv python=$TRAVIS_PYTHON_VERSION
 - source activate testenv
-- conda install $CONDA_DEPS
+- conda install -c conda-forge $CONDA_DEPS
 - pip install $PIP_DEPS
 - pip install codecov
 
 install:
+- cd package
 - python setup.py install
+- cd ..
 
 script:
 - pytest --verbose --cov-report term --cov=$PACKAGENAME --ignore=package/tests/data/ package/tests/
