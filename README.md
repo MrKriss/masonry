@@ -27,11 +27,11 @@ project-templates directory for examples).
 
 2.  Initialise a new project with its default starting template
 
-    mason init project/template/path
+        mason init project/template/path
 
 3.  Add an extra templating layer to the project
 
-    mason add template_name
+        mason add template_name
 
 
 # Creating and Using Template Layers for a Custom Project
