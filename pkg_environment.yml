@@ -1,0 +1,22 @@
+name: stone-mason
+channels:
+- defaults
+- conda-forge
+dependencies:
+  # Core
+  - python=3.6.1
+
+  # 3rd party
+  - cookiecutter
+  - ruamel_yaml
+  - docopt
+  - gitpython
+  - clint
+
+  # Testing 
+  - pytest
+  - pytest-cov
+  - coverage
+
+  - pip:
+    - inquirer
