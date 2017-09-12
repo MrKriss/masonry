@@ -1,6 +1,6 @@
 
 Bugs:
-    ☐ Need to remove _prefix/_fostfix file once used
+    ✔ Need to remove /_postfix file once used @done (9/9/2017, 8:52:55 PM)
     ☐ If the add command errors, the final directory structure is wiped. 
     ✔ Reports files are moved when they are not in package template @done (9/6/2017, 12:14:47 AM)
     ☐ templates applied is not filtered for previous templates in .mason field
@@ -23,7 +23,10 @@ Features:
         ✔ Add ability to insert before or after main code body in python filess @done (9/3/2017, 6:08:09 PM)
         ✔ Add git commiting after each layer by default @done (7/21/2017, 12:13:25 AM)
         ☐ Use isort to autosort imports (https://github.com/timothycrosley/isort)
-
+    Management:
+        ☐ Add a cache command to add a template to those saved
+        ☐ Add an update command to update all template collections for projects.
+        ☐ Add a validate command to check all template layers
 
 Tests:
     init command:

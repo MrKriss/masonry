@@ -100,8 +100,5 @@ ENV/
 # mypy
 .mypy_cache/
 
-# OSX
+# Mac OS
 .DS_Store
-
-# VScode Project setting
-.vscode
