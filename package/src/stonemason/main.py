@@ -29,19 +29,21 @@ def main(args=None):
                 project_dir = prompt_init_project(project_templates)
             else:
                 raise ValueError("No known projects to choose from. "
-                                 "Add one using the PROJECT argument.")        
+                                 "Add one using the PROJECT argument.")
         else:
             project_dir, template = parse_project_argument(args['PROJECT'])
 
         # intialise a new project based on template
+        output_dir = Path(args['--output']).resolve()
+
         initialise_project(
             project=project_dir,
             template=template,
-            output_dir=args['--output'])
+            output_dir=output_dir)
 
     elif args['add']:
 
-        project_dir = Path(args['--output'])
+        project_dir = Path(args['--output']).resolve()
 
         # Load existing state information
         mason_vars = project_dir / '.mason'
@@ -50,7 +52,7 @@ def main(args=None):
 
         project_templates_root = project_templates[project_state['project']]
 
-        # Get project template options 
+        # Get project template options
         if not args['TEMPLATE']:
             # inquire which template to use
             args['TEMPLATE'] = prompt_add_template(project_templates_root, project_state)
