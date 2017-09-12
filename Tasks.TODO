@@ -1,9 +1,9 @@
 
 Bugs:
     ✔ Need to remove /_postfix file once used @done (9/9/2017, 8:52:55 PM)
-    ☐ If the add command errors, the final directory structure is wiped. 
+    ✔ If the add command errors, the final directory structure is wiped. @done (9/12/2017, 11:06:58 PM)
     ✔ Reports files are moved when they are not in package template @done (9/6/2017, 12:14:47 AM)
-    ☐ templates applied is not filtered for previous templates in .mason field
+    ✔ templates applied is not filtered for previous templates in .mason field @done (9/12/2017, 11:07:01 PM)
 
 Documentation:
     ✔ Update README with project description @done (8/29/2017, 11:26:18 PM)
