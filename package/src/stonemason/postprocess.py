@@ -32,6 +32,9 @@ def combine_file_snippets(project_dir):
                 else:
                     postfix_text(postfile, original)
                     print('Postfixing', original)
+
+                os.remove(postfile)
+
             else:
                 raise ValueError(f'Original file not found for specified postfix: {postfile}')
 
@@ -50,6 +53,9 @@ def combine_file_snippets(project_dir):
                 else:
                     prefix_text(prefile, original)
                     print('Prefixing', original)
+
+                os.remove(prefile)
+
             else:
                 raise ValueError(f'Original file not found for specified prefix: {prefile}')
 
