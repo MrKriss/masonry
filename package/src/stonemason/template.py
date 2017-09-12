@@ -16,7 +16,7 @@ from .utils import load_application_data, save_application_data
 from.prompt import prompt_cookiecutter_variables
 
 
-def initialise_project(project, template=None, output_dir='.'):
+def initialise_project(project: Path, template=None, output_dir='.'):
 
     # Initialise path variables
     project_path = Path(project).resolve()
@@ -67,37 +67,36 @@ def initialise_project(project, template=None, output_dir='.'):
         template = template_paths[name].as_posix()
         context_variables = prompt_cookiecutter_variables(template, project_state['variables'])
 
-        project_dir, content = render_cookiecutter(
-            template, no_input=True,
-            extra_context=context_variables,
-            output_dir=output_dir, overwrite_if_exists=True,
+        output_project_dir, content = safe_render(
+            template, output_dir, context=context_variables
         )
 
         # This combines any prefix/postfix files added by the template to the originally named file
         # e.g. the cntent of 'Makefile_postfix' with be added to the end of the file 'Makefile',
         # and the cntent of 'MANIFEST_pretfix.in' with be added to the start of the file 'MANIFEST.in'
-        combine_file_snippets(project_dir)
+        combine_file_snippets(output_project_dir)
 
-        if not (Path(project_dir) / '.git').exists() and 'repo' not in vars():
+        if not (Path(output_project_dir) / '.git').exists() and 'repo' not in vars():
             # Initialise git repo
-            repo = git.Repo.init(project_dir)
+            repo = git.Repo.init(output_project_dir)
         else:
-            repo = git.Repo(project_dir)
+            repo = git.Repo(output_project_dir)
 
         puts(f'Rendered: {template}')
 
         # Save state
         project_state['variables'].update(content)
-        project_state['templates'].append(name)
+        if name not in project_state['templates']:
+            project_state['templates'].append(name)
         project_state['project'] = project_path.name
 
         # Save state of project variables
-        mason_vars = Path(project_dir) / '.mason'
+        mason_vars = Path(output_project_dir) / '.mason'
         with mason_vars.open('w') as f:
             json.dump(project_state, f, indent=4)
 
         # Commit template layer to git repo
-        all_files = [p.as_posix() for p in Path(project_dir).iterdir() if p.is_file]
+        all_files = [p.as_posix() for p in Path(output_project_dir).iterdir() if p.is_file]
         repo.index.add(all_files)
         repo.index.commit(f"Add '{name}' template layer via stone mason.")
 
@@ -137,8 +136,9 @@ def add_template(templates, project_dir):
 
     for t in templates:
         order = [n.name for n in resolve(g[t]) if n.name not in previous_templates]
-        template_orders.append(order)
-        previous_templates.extend(order)
+        if order:
+            template_orders.append(order)
+            previous_templates.extend(order)
 
     puts(f'Adding the following templates to project:\n\t{template_orders}')
 
@@ -150,11 +150,12 @@ def add_template(templates, project_dir):
             context_variables = prompt_cookiecutter_variables(template, project_state['variables'])
             project_state['variables'].update(context_variables)
 
-            output_project_dir, content = render_cookiecutter(
-                template, no_input=True,
-                extra_context=project_state['variables'],
-                output_dir=project_dir.parent, overwrite_if_exists=True,
+            output_project_dir, content = safe_render(
+                template,
+                target_dir=project_dir.parent,
+                context=project_state['variables']
             )
+
             puts(f'Rendered: {template}')
 
             # This combines any prefix/postfix files added by the template to the originally named file
@@ -164,7 +165,8 @@ def add_template(templates, project_dir):
 
             # Save state
             project_state['variables'].update(content)
-            project_state['templates'].append(name)
+            if name not in project_state['templates']:
+                project_state['templates'].append(name)
 
             # Save state of project variables
             with mason_vars.open('w') as f:
@@ -175,3 +177,30 @@ def add_template(templates, project_dir):
             # Commit template layer to git repo
             repo.git.add(output_project_dir.as_posix(), force=False)
             repo.index.commit(f"Add '{name}' template layer via stone mason.")
+
+
+def safe_render(template, target_dir, context):
+    """Safely Render a new template by first making a backup to roll back to if needed."""
+
+    # Copy current directory to temp backup location
+    backup_dir = Path(tempfile.mkdtemp()) / 'backup'
+    shutil.copytree(target_dir, backup_dir)
+
+    try:
+        output_dir, content = render_cookiecutter(
+            template, no_input=True,
+            extra_context=context,
+            output_dir=target_dir,
+            overwrite_if_exists=True,
+        )
+    except Exception as e:
+        # Rollback
+        print("The following error occurs during templating, Rolling back to last stable state.")
+        print(e)
+        shutil.rmtree(target_dir)
+        shutil.copytree(backup_dir, target_dir)
+        sys.exit(1)
+
+    shutil.rmtree(backup_dir.as_posix())
+
+    return output_dir, content
