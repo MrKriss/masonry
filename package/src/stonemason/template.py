@@ -1,17 +1,19 @@
 
-from pathlib import Path
 import json
+import shutil
 import sys
+import tempfile
+from pathlib import Path
 
 import git
+from clint.textui import colored, prompt, puts, validators
 
-from .resolution import create_dependency_graph, resolve
-from .render import render_cookiecutter
-from .utils import load_application_data, save_application_data
 from .postprocess import combine_file_snippets
+from .render import render_cookiecutter
+from .resolution import create_dependency_graph, resolve
+from .utils import load_application_data, save_application_data
 
 from.prompt import prompt_cookiecutter_variables
-from clint.textui import prompt, puts, colored, validators
 
 
 def initialise_project(project, template=None, output_dir='.'):
