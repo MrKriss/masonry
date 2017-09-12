@@ -28,12 +28,11 @@ def combine_file_snippets(project_dir):
                     all_text = insert_code(postfile, original, kind='postfix')
                     with open(original, 'w') as f:
                         f.write(all_text)
+                    os.remove(postfile)
                     print('Postfixing Python Code into', original)
                 else:
                     postfix_text(postfile, original)
                     print('Postfixing', original)
-
-                os.remove(postfile)
 
             else:
                 raise ValueError(f'Original file not found for specified postfix: {postfile}')
@@ -49,12 +48,11 @@ def combine_file_snippets(project_dir):
                     all_text = insert_code(prefile, original, kind='prefix')
                     with open(original, 'w') as f:
                         f.write(all_text)
+                    os.remove(prefile)
                     print('Prefixing Python Code into', original)
                 else:
                     prefix_text(prefile, original)
                     print('Prefixing', original)
-
-                os.remove(prefile)
 
             else:
                 raise ValueError(f'Original file not found for specified prefix: {prefile}')
