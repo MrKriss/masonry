@@ -2,6 +2,8 @@
 
 Ask whether to transfer .py files under analysis/ to package src.
 
+Move dev/frozen environment files to package directory
+
 """
 
 {% if cookiecutter.transfer_analysis_scripts_to_package == "Yes" %}
@@ -18,3 +20,7 @@ for file_ in scripts_dir.glob('*.py'):
 print('Moved %d .py files to package/src/{{cookiecutter.package_name}}' % n)
 {% endif %}
 
+# Move environment files
+environment_files = pathlib.Path('.').absolute().glob('*environment.yml')
+for file_ in environment_files:
+    shutil.move(file_.as_posix(), './package/')

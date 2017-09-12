@@ -11,8 +11,7 @@
             "package"
         ],
         "conda-recipe": [
-            "package",
-            "docker"
+            "package"
         ],
         "docker": [],
         "deploy": [
