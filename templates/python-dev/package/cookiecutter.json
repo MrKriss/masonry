@@ -1,0 +1,19 @@
+{
+    "author": "cmusselle",
+    "project_name": "",
+    "package_name": "mypackage",
+    "short_description": "",
+    "python_version": "3",
+    "python_libraries": [
+        "",
+        "ipython",
+        "jupyter",
+        "jupyter pandas matplotlib",
+        "jupyter pandas matplotlib seaborn statsmodels",
+        "jupyter pandas matplotlib seaborn scikit-learn"
+    ],
+    "git_usage": [
+        "Yes",
+        "No"
+    ]
+}

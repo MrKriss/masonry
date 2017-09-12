@@ -1,29 +1,30 @@
-""" Hook to add all items in the requirements file to the conda meat.ymal run requirements """
+""" Hook to add all items in the dev_environment file to the conda meat.ymal run requirements """
 
 import pathlib
 from ruamel.yaml import YAML
-import pip.req
 
-requirements_file = pathlib.Path('.').resolve() / 'requirements.txt'
-conda_metadata_file = pathlib.Path('.').resolve() / 'recipe' / 'meta.yaml'
+PY_VERSON = "python={{cookiecutter.python_version}}"
 
-if requirements_file.exists():
-    dependencies = []
+# Define Paths
+environment_file = pathlib.Path('.').resolve() / 'dev_environment.yml'
+conda_metadata_file = (
+    pathlib.Path('.').resolve() / 'recipes' /
+    '{{cookiecutter.package_name}}' / 'meta.yaml'
+)
 
-    print('got there')
+# init parser
+yaml = YAML()
+yaml.default_flow_style = False
 
-    for item in pip.req.parse_requirements(requirements_file.as_posix(), session="somesession"):
-        print('loop')
+# Read in files
+environment_spec = yaml.load(environment_file.open())
+conda_recipe = yaml.load(conda_metadata_file.open())
 
-        if isinstance(item, pip.req.InstallRequirement):
-            dep = f"{item.name} {item.req.specifier}"
-            dependencies.append(dep)
+# Update
+for package in environment_spec['dependencies']:
+    if isinstance(package, str):
+        if not package.startswith(PY_VERSON):
+            conda_recipe['requirements']['run'].append(package)
 
-    print('got there')
-
-    # Load existing conda metadata, append dependencies and write back out
-    yaml = YAML()
-    yaml.default_flow_style = False
-    conda_recipe = yaml.load(conda_metadata_file.open())
-    conda_recipe['requirements']['run'].extend(dependencies)
-    yaml.dump(conda_recipe, conda_metadata_file.open(mode='w'))
+# Write out
+yaml.dump(conda_recipe, conda_metadata_file.open(mode='w'))

@@ -1,0 +1,22 @@
+{
+    "default": "package",
+    "dependencies": {
+        "pytest": [
+            "package"
+        ],
+        "logging": [
+            "package"
+        ],
+        "flask": [
+            "package"
+        ],
+        "conda-recipe": [
+            "package",
+            "docker"
+        ],
+        "docker": [],
+        "deploy": [
+            "conda-recipe"
+        ]
+    }
+}

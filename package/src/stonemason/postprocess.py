@@ -14,8 +14,6 @@ def combine_file_snippets(project_dir):
         if '.git' in dirnames:
             dirnames.remove('.git')
 
-        print('Scanning files:', filenames)
-
         postfix_files = fnmatch.filter(filenames, '*_postfix*')
         prefix_files = fnmatch.filter(filenames, '*_prefix*')
 

@@ -35,7 +35,7 @@ def save_application_data(obj, location=None):
 
     template_metadata_path = app_data_dir / "templates.json"
 
-    json.dump(obj, template_metadata_path.open('w'))
+    json.dump(obj, template_metadata_path.open('w'), indent=4)
 
 
 def rindex(lst, item):

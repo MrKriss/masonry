@@ -1,10 +1,12 @@
-# templates
-cookiecutter templates for data science and development
+# Python Data Science Template Collection
+
+These templates form a set of template layers for use with the stonemason utility. 
 
 ## Requirements 
 
-* Python 2.7 / 3.4+
+* Python 3.6
 * [cookiecutter](https://github.com/audreyr/cookiecutter). Can be installed with `pip install cookiecutter`
+
 
 ## Basic Usage for Default Template
 

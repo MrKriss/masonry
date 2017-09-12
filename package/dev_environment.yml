@@ -8,7 +8,6 @@ dependencies:
 
   # 3rd party
   - cookiecutter
-  - ruamel_yaml
   - docopt
   - gitpython
   - clint
@@ -20,3 +19,5 @@ dependencies:
 
   - pip:
     - inquirer
+    - ruamel.yaml
+    - schema

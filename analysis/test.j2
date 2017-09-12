@@ -1,0 +1,14 @@
+name: {{project_name}}
+channels:
+- defaults
+- conda-forge
+dependencies:
+# Core 
+- python={{python_version}}
+# 3rd Party
+{%- set python_libs = python_libraries.split(' ') %}
+{%- if python_libs != "NONE" %}
+{%- for lib in python_libs %}
+- {{lib}}
+{%- endfor %}
+{% endif %}

@@ -11,7 +11,7 @@ from conftest import TEST_DIR
 @pytest.fixture(scope='module')
 def init_base_project(tmpdir_factory):
 
-    # Setup a basic project 
+    # Setup a basic project
     temp_output_path = tmpdir_factory.mktemp('base_package').strpath
     template_path = os.path.join(TEST_DIR, 'data', 'python-project')
 
@@ -75,7 +75,7 @@ def test_adding_single_project(init_base_project):
     assert result == target
 
     # Check git repo was created and commits made
-    repo_dir = current_project_path 
+    repo_dir = current_project_path
     r = git.Repo(repo_dir.as_posix())
     log = r.git.log(pretty='oneline').split('\n')
     assert len(log) == 2
@@ -105,11 +105,11 @@ def test_adding_multiple_projects(init_base_project):
         'src/testpackage',
         'src/testpackage/__init__.py',
         'src/testpackage/main.py',
-        'tests/test_foo.py', 
-        'recipe/build.bat',
-        'recipe/build.sh', 
-        'recipe/run_test.py', 
-        'recipe/meta.yaml'
+        'tests/test_foo.py',
+        'recipes/testpackage/build.bat',
+        'recipes/testpackage/build.sh',
+        'recipes/testpackage/run_test.py',
+        'recipes/testpackage/meta.yaml'
     ]
     for f in files:
         p = current_project_path / f
@@ -130,11 +130,10 @@ def test_adding_multiple_projects(init_base_project):
     assert result == target
 
     # Check git repo was created and commits made
-    repo_dir = current_project_path 
+    repo_dir = current_project_path
     r = git.Repo(repo_dir.as_posix())
     log = r.git.log(pretty='oneline').split('\n')
     assert len(log) == 3
     assert "Add 'conda' template layer via stone mason." in log[0]
     assert "Add 'pytest' template layer via stone mason." in log[1]
     assert "Add 'package' template layer via stone mason." in log[2]
-

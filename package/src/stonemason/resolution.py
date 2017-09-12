@@ -4,6 +4,7 @@ import json
 
 class Node:
     """A simple class to represent a node in a graph"""
+
     def __init__(self, name):
         self.name = name
         self.edges = []
@@ -21,7 +22,7 @@ def create_dependency_graph(filename, node_list):
     # Initialise nodes from passed in node_list names
     nodes = {n: Node(n) for n in node_list}
     if default_template not in nodes:
-        nodes[default_template] = Node(default_template) 
+        nodes[default_template] = Node(default_template)
 
     # Add in edges if dependencies are listed in the meta_data
     for k, v in nodes.items():
@@ -47,7 +48,7 @@ def resolve(node, resolved=None, seen=None):
         Source code obtained form the following paper. 
 
     .. https://www.electricmonk.nl/docs/dependency_resolving_algorithm/dependency_resolving_algorithm.html
-        
+
     """
     if resolved is None:
         resolved = []

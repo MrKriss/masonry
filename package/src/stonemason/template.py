@@ -21,7 +21,7 @@ def initialise_project(project, template=None, output_dir='.'):
     meta_data_path = project_path / 'metadata.json'
     project_templates = load_application_data()
 
-    # If project is a valid project file 
+    # If project is a valid project file
     if not meta_data_path.exists():
         raise IOError("Not a valid project directory. Missing matadata.json file")
 
@@ -35,7 +35,7 @@ def initialise_project(project, template=None, output_dir='.'):
     if project_path.name in project_templates:
         if project_templates[project_path.name] != project_path.as_posix():
             ans = prompt.query(
-                "Project with the same name already exists in another location. Overwrite? [y/n]", 
+                "Project with the same name already exists in another location. Overwrite? [y/n]",
                 validators=[validators.RegexValidator('[yn]')])
             if ans == 'n':
                 sys.exit()
@@ -60,7 +60,6 @@ def initialise_project(project, template=None, output_dir='.'):
     project_state['templates'] = []
     project_state['variables'] = {}
 
-
     # Cycle through templates and render them
     for name in template_order:
         template = template_paths[name].as_posix()
@@ -74,11 +73,11 @@ def initialise_project(project, template=None, output_dir='.'):
 
         # This combines any prefix/postfix files added by the template to the originally named file
         # e.g. the cntent of 'Makefile_postfix' with be added to the end of the file 'Makefile',
-        # and the cntent of 'MANIFEST_pretfix.in' with be added to the start of the file 'MANIFEST.in' 
+        # and the cntent of 'MANIFEST_pretfix.in' with be added to the start of the file 'MANIFEST.in'
         combine_file_snippets(project_dir)
 
         if not (Path(project_dir) / '.git').exists() and 'repo' not in vars():
-            # Initialise git repo 
+            # Initialise git repo
             repo = git.Repo.init(project_dir)
         else:
             repo = git.Repo(project_dir)
@@ -93,14 +92,14 @@ def initialise_project(project, template=None, output_dir='.'):
         # Save state of project variables
         mason_vars = Path(project_dir) / '.mason'
         with mason_vars.open('w') as f:
-            json.dump(project_state, f)
+            json.dump(project_state, f, indent=4)
 
         # Commit template layer to git repo
         all_files = [p.as_posix() for p in Path(project_dir).iterdir() if p.is_file]
         repo.index.add(all_files)
         repo.index.commit(f"Add '{name}' template layer via stone mason.")
-    
-    
+
+
 def add_template(templates, project_dir):
     """ Add a template to an existing project """
 
@@ -133,7 +132,7 @@ def add_template(templates, project_dir):
 
     # Resolve dependencies for specified template
     template_orders = []
-    
+
     for t in templates:
         order = [n.name for n in resolve(g[t]) if n.name not in previous_templates]
         template_orders.append(order)
@@ -158,7 +157,7 @@ def add_template(templates, project_dir):
 
             # This combines any prefix/postfix files added by the template to the originally named file
             # e.g. the cntent of 'Makefile_postfix' with be added to the end of the file 'Makefile',
-            # and the cntent of 'MANIFEST_pretfix.in' with be added to the start of the file 'MANIFEST.in' 
+            # and the cntent of 'MANIFEST_pretfix.in' with be added to the start of the file 'MANIFEST.in'
             combine_file_snippets(output_project_dir)
 
             # Save state
@@ -167,10 +166,10 @@ def add_template(templates, project_dir):
 
             # Save state of project variables
             with mason_vars.open('w') as f:
-                json.dump(project_state, f)
+                json.dump(project_state, f, indent=4)
 
             output_project_dir = Path(output_project_dir)
 
-            # Commit template layer to git repo            
+            # Commit template layer to git repo
             repo.git.add(output_project_dir.as_posix(), force=False)
             repo.index.commit(f"Add '{name}' template layer via stone mason.")

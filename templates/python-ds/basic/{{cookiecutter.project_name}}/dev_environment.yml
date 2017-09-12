@@ -1,0 +1,14 @@
+name: {{cookiecutter.project_name}}
+channels:
+- defaults
+- conda-forge
+dependencies:
+# Core 
+- python={{cookiecutter.python_version}}
+# 3rd Party
+{%- set python_libs = cookiecutter.python_libraries.split(' ') %}
+{%- if python_libs != "NONE" %}
+{%- for lib in python_libs %}
+- {{lib}}
+{%- endfor %}
+{% endif %}

@@ -1,0 +1,4 @@
+.PHONY:conda
+# Build conda package from recipe
+conda:
+	conda build package/recipes/ --output-folder conda-package

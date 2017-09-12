@@ -1,0 +1,4 @@
+# Test Dependencies
+- pytest
+- pytest-cov
+- coverage
