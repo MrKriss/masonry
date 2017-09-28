@@ -1,6 +1,13 @@
 {
     "default": "basic",
     "dependencies": {
+        "ci": [
+            "docker",
+            "pytest"
+        ],
+        "cli": [
+            "package"
+        ],
         "package": [
             "basic"
         ],
