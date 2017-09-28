@@ -1,18 +1,16 @@
 package:
-  name: {{cookiecutter.package_name}}
-  version: {% raw %}"{{ GIT_DESCRIBE_TAG }}"{% endraw %} 
+  name: "{{cookiecutter.package_name}}"
+  version: {% raw %}"{{ environ.get("GIT_DESCRIBE_TAG", '0.0.0') }}"{% endraw %} 
 
 build:
   noarch: python
-  number: {% raw %}"{{ GIT_DESCRIBE_NUMBER }}"{% endraw %}
-  string: {% raw %}"{{ GIT_BUILD_STR }}"{% endraw %}
-{%- if cookiecutter.entry_point_name != "" %}
+  number: {% raw %}"{{ environ.get("GIT_DESCRIBE_NUMBER", 0) }}"{% endraw %}
+  string: {% raw %}"{{ environ.get("GIT_BUILD_STR", 'untagged')  }}"{% endraw %}
   entry_points:
-     - {{cookiecutter.entry_point_name}} = {{cookiecutter.package_name}}.main:main
-{%- endif %}
+     - "{{cookiecutter.package_name}} = {{cookiecutter.package_name}}.main:main"
 
 source:
-  path: ../../
+  path: ../../../
 
 requirements:
   build:
@@ -31,10 +29,8 @@ test:
     - pytest >=3.0.7
     - pytest-cov >=2.3.1
 
-{% if cookiecutter.entry_point_name != "" -%}
   commands:
-    - {{cookiecutter.entry_point_name}} -h 
-{%- endif %}
+    - "{{cookiecutter.package_name}} -h"
 
   # A file called run_test.py is also included in the recipe that will be run
   # at test time.
