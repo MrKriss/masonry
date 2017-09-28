@@ -1,9 +1,10 @@
 """Main Entry point to {{cookiecutter.package_name}}"""
 
-import pathlib
+from pathlib import Path
 
 
-def main():
+def main(args=None):
+    """ Execute the main program entry point """
     pass
 
 
