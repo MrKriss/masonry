@@ -1,0 +1,8 @@
+{
+    "package_name": "mypackage",
+    "author_email": "",
+    "transfer_analysis_scripts_to_package": [
+        "Yes",
+        "No"
+    ]
+}
