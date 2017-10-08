@@ -144,7 +144,8 @@ out a template for a new project.
 * [yeoman](http://yeoman.io/) A project scaffolding tool for web development written in javascript. 
 
 * [mason](https://github.com/metacran/mason) A project in R similar to cookiecutter but with a 
-nicer UI, and one of the inspirations for this project. 
+colourful UI, and one of the inspirations for this project. 
 
 * [usethis](https://github.com/r-lib/usethis) A project in the R community looking at similar ideas 
 around project template composeability, and being able to add them as needed on a project. 
+
