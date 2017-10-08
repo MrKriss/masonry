@@ -4,7 +4,7 @@
 docker:
 	docker login
 	cp package/frozen_environment.yml docker/frozen_environment.yml
-	docker build -t cmusselle/{{cookiecutter.project_name}} -f docker/dockerfile docker/
-	docker push cmusselle/{{cookiecutter.project_name}}
+	docker build -t {{cookiecutter.docker_namespace}}/{{cookiecutter.project_name}} -f docker/dockerfile docker/
+	docker push {{cookiecutter.docker_namespace}}/{{cookiecutter.project_name}}
 	rm docker/frozen_environment.yml
 
