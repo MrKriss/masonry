@@ -18,9 +18,13 @@ rollback:
 .PHONY:test
 # Run tests with Pytest 
 test: 
-	pytest --verbose --cov-report term --cov=stonemason package/tests --ignore package/tests/data
+	pytest --verbose --cov-report term --cov=stonemason package/tests \
+		   --ignore package/tests/example_templates \
+		   --ignore package/tests/data
 
 .PHONY:debug
 # Run tests with Pytest with debug on 
 debug: 
-	pytest --verbose -s --pudb --cov-report term --cov=stonemason package/tests --ignore package/tests/data
+	pytest --verbose -s --pudb --cov-report term --cov=stonemason package/tests \
+	      --ignore package/tests/example_templates \
+		  --ignore package/tests/data
