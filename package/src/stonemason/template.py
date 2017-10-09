@@ -184,7 +184,7 @@ def safe_render(template, target_dir, context):
 
     # Copy current directory to temp backup location
     backup_dir = Path(tempfile.mkdtemp()) / 'backup'
-    shutil.copytree(target_dir, backup_dir)
+    backup = shutil.copytree(target_dir, backup_dir)
 
     try:
         output_dir, content = render_cookiecutter(
@@ -198,8 +198,9 @@ def safe_render(template, target_dir, context):
         print("The following error occurs during templating, Rolling back to last stable state.")
         print(e)
         shutil.rmtree(target_dir)
-        shutil.copytree(backup_dir, target_dir)
-        sys.exit(1)
+        shutil.copytree(backup, target_dir)
+        print(f'Copied {backup_dir} to {target_dir}')
+        raise(e)
 
     shutil.rmtree(backup_dir.as_posix())
 

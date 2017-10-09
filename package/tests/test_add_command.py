@@ -12,8 +12,8 @@ from conftest import TEST_DIR
 def init_base_project(tmpdir_factory):
 
     # Setup a basic project
-    temp_output_path = tmpdir_factory.mktemp('base_package').strpath
-    template_path = os.path.join(TEST_DIR, 'data', 'python-project')
+    temp_output_path = Path(tmpdir_factory.mktemp('base_package').strpath)
+    template_path = TEST_DIR / 'example_templates' / 'python_project'
 
     # Set arguments
     args = f"init -o {temp_output_path} {template_path}"

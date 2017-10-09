@@ -12,7 +12,7 @@ def test_init_with_project(tmpdir):
     output_path = Path(tmpdir.strpath)
 
     # Set arguments
-    args = f"init -o {output_path.as_posix()} {TEST_DIR}/data/python-project"
+    args = f"init -o {output_path} {TEST_DIR}/example_templates/python_project"
 
     from stonemason import main
     # Run from entry point
@@ -54,7 +54,7 @@ def test_init_with_project_and_template(tmpdir, no_prompts):
     output_path = Path(tmpdir.strpath)
 
     # Set arguments
-    args = f"init -o {output_path.as_posix()} {TEST_DIR}/data/python-project/pytest"
+    args = f"init -o {output_path} {TEST_DIR}/example_templates/python_project/pytest"
 
     from stonemason import main
     # Run from entry point

@@ -1,0 +1,11 @@
+{
+    "default": "first_layer",
+    "dependencies": {
+        "second_layer": [
+            "first_layer"
+        ],
+        "third_layer": [
+            "second_layer"
+        ]
+    }
+}

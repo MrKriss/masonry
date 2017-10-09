@@ -1,0 +1,12 @@
+{
+    "default": "first_layer",
+    "dependencies": {
+        "breaking_variable_name": [],
+        "breaking_post_hook": [
+            "first_layer"
+        ],
+        "breaking_pre_hook": [
+            "first_layer"
+        ]
+    }
+}

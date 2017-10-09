@@ -1,0 +1,1 @@
+{{coookiecutter.file2_text}}
