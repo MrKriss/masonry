@@ -25,7 +25,7 @@ def initialise_project(project: Path, template=None, output_dir='.'):
 
     # If project is a valid project file
     if not meta_data_path.exists():
-        raise IOError("Not a valid project directory. Missing matadata.json file")
+        raise IOError("Not a valid project directory. Missing metadata.json file")
 
     if not template:
         # Load metadata for project and read in default template from there
@@ -100,8 +100,10 @@ def initialise_project(project: Path, template=None, output_dir='.'):
         repo.index.add(all_files)
         repo.index.commit(f"Add '{name}' template layer via stone mason.")
 
+    return output_project_dir
 
-def add_template(templates, project_dir):
+
+def add_template(templates: list, project_dir: Path):
     """ Add a template to an existing project """
 
     project_dir = Path(project_dir).resolve()
