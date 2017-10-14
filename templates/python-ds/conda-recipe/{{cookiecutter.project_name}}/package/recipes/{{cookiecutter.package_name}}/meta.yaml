@@ -1,11 +1,11 @@
 package:
   name: "{{cookiecutter.package_name}}"
-  version: {% raw %}"{{ environ.get("GIT_DESCRIBE_TAG", '0.0.0') }}"{% endraw %} 
+  version: "{% raw %}{{ environ.get('GIT_DESCRIBE_TAG', '0.0.0') }}{% endraw %}"
 
 build:
   noarch: python
-  number: {% raw %}"{{ environ.get("GIT_DESCRIBE_NUMBER", 0) }}"{% endraw %}
-  string: {% raw %}"{{ environ.get("GIT_BUILD_STR", 'untagged')  }}"{% endraw %}
+  number: "{% raw %}{{ environ.get('GIT_DESCRIBE_NUMBER', 0) }}{% endraw %}"
+  string: "{% raw %}{{ environ.get('GIT_BUILD_STR', 'untagged')  }}{% endraw %}"
   entry_points:
      - "{{cookiecutter.package_name}} = {{cookiecutter.package_name}}.main:main"
 
