@@ -1,6 +1,17 @@
 {
-    "package_name": "mypackage",
+    "author": "",
     "author_email": "",
+    "project_name": "myproject",
+    "package_name": "mypackage",
+    "short_description": "",
+    "python_libraries": [
+        "NONE",
+        "ipython",
+        "jupyter",
+        "jupyter pandas matplotlib",
+        "jupyter pandas matplotlib seaborn statsmodels",
+        "jupyter pandas matplotlib seaborn scikit-learn"
+    ],
     "transfer_analysis_scripts_to_package": [
         "Yes",
         "No"

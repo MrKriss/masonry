@@ -1,4 +1,5 @@
 {
     "project_name": "mypproject",
-    "package_name": "mypackage"
+    "package_name": "mypackage",
+    "python_version": "3.6"
 }
