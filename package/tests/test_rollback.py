@@ -9,6 +9,8 @@ from conftest import TEST_DIR
 
 from stonemason import main
 
+from cookiecutter.exceptions import FailedHookException, UndefinedVariableInTemplate
+
 
 @pytest.fixture(scope='module')
 def init_simple_project(tmpdir_factory):
@@ -41,7 +43,7 @@ def test_rollback_when_error_in_pre_hook(init_simple_project):
 
     # WHEN a template is added that causes an error
     args = f"add -o {project_dir} breaking_pre_hook"
-    with pytest.raises(Exception):
+    with pytest.raises(FailedHookException):
         main.main(args=args)
 
     # THEN only the original files should be present
@@ -67,7 +69,7 @@ def test_rollback_when_error_in_post_hook(init_simple_project):
 
     # WHEN a template is added that causes an error
     args = f"add -o {project_dir} breaking_post_hook"
-    with pytest.raises(Exception):
+    with pytest.raises(FailedHookException):
         main.main(args=args)
 
     # THEN only the original files should be present
@@ -93,7 +95,7 @@ def test_rollback_when_error_in_variable_name(init_simple_project):
 
     # WHEN a template is added that causes an error
     args = f"add -o {project_dir} breaking_variable_name"
-    with pytest.raises(Exception):
+    with pytest.raises(UndefinedVariableInTemplate):
         main.main(args=args)
 
     # THEN only the original files should be present
@@ -120,7 +122,7 @@ def test_rollback_when_init_project(tmpdir_factory):
 
     # WHEN a new project is initialised that causes an error
     args = f"init -o {temp_output_path} {template_path}/breaking_variable_name"
-    with pytest.raises(Exception):
+    with pytest.raises(UndefinedVariableInTemplate):
         main.main(args=args)
 
     # THEN the directory should be empty
