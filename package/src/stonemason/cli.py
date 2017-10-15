@@ -3,8 +3,8 @@
 A tool for working with composable project templates. 
 
 Usage:
-    mason init [-o DIR] [PROJECT]
-    mason add [-o DIR] [TEMPLATE ...]
+    mason init [-v] [-o DIR] [PROJECT]
+    mason add [-v] [-o DIR] [TEMPLATE ...]
     mason (-h | --help)
     mason --version
 
@@ -20,6 +20,7 @@ Options:
   -o DIR --output=DIR  Project directory to create/add to [default: .]
   -h --help            Show this screen.
   --version            Show version.
+  -v                   Increase verbosity of output
 """
 import os
 from sys import exit
@@ -53,7 +54,7 @@ def validate_args(args):
     def mason_file_exists(output):
         mason_path = os.path.join(output, '.mason')
         return os.path.exists(mason_path)
-    
+
     if args['init']:
         schema = Schema({
             # 'TEMPLATE': And(template_path_exists, error='TEMPLATE should be subdirectory of PROJECT'),

@@ -9,12 +9,20 @@ import os
 import json
 from pathlib import Path
 
+from .utils import setup_logger
+
 
 def main(args=None):
 
     # Read in Arguments
     args = parse_and_validate_args(args)
-    print(args)
+
+    if args['-v']:
+        logger = setup_logger(logfile=None, level='DEBUG')
+    else:
+        logger = setup_logger(logfile=None, level='INFO')
+
+    logger.debug(f'Passed Arguments: {args}')
 
     project_templates = load_application_data()
 
@@ -47,6 +55,10 @@ def main(args=None):
 
         # Load existing state information
         mason_vars = project_dir / '.mason'
+
+        if not mason_vars.exists():
+            raise IOError(f'A ".mason" file was not detected int he output directoty {project_dir}')
+
         with mason_vars.open('r') as f:
             project_state = json.load(f)
 
