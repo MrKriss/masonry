@@ -1,0 +1,17 @@
+site_name: "{{cookiecutter.project_name}}"
+
+site_author: "{{cookiecutter.author}}"
+
+site_dir: site
+
+docs_dir: package/docs
+
+pages: 
+- Home: 'index.md'
+
+# - Guides:
+#     - 'Installation': 'Install Guide.md'
+#     - 'User Guide': 'User Guide.md'
+# - About:
+#     - 'Release Notes': 'CHANGELOG.md'
+#     - 'Building these Docs': 'mkdocs.md'

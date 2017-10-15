@@ -8,6 +8,9 @@
         "cli": [
             "package"
         ],
+        "mkdocs": [
+            "package"
+        ],
         "package": [
             "basic"
         ],
