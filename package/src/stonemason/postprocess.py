@@ -4,9 +4,10 @@ import fnmatch
 import os
 
 from .utils import rindex
+from clint.textui import puts, indent, colored
 
 
-def combine_file_snippets(project_dir):
+def combine_file_snippets(project_dir, stream):
     """ Recusively search for files ending in posfix/prefix and join them to their originals """
 
     for dirpath, dirnames, filenames in os.walk(project_dir):
@@ -17,45 +18,48 @@ def combine_file_snippets(project_dir):
         postfix_files = fnmatch.filter(filenames, '*_postfix*')
         prefix_files = fnmatch.filter(filenames, '*_prefix*')
 
-        for postfile in postfix_files:
-            original = os.path.join(dirpath, postfile.replace('_postfix', ''))
-            print('Looking for original file:', original)
+        if postfix_files or prefix_files:
+            puts(f"Applying postprocessing in {dirpath} ...", stream=stream)
 
-            if os.path.exists(original):
-                postfile = os.path.join(dirpath, postfile)
+        with indent(4):
+            for postfile in postfix_files:
+                original = os.path.join(dirpath, postfile.replace('_postfix', ''))
 
-                if postfile.endswith('.py') and original.endswith('.py'):
-                    all_text = insert_code(postfile, original, kind='postfix')
-                    with open(original, 'w') as f:
-                        f.write(all_text)
-                    os.remove(postfile)
-                    print('Postfixing Python Code into', original)
+                if os.path.exists(original):
+                    postfile = os.path.join(dirpath, postfile)
+
+                    if postfile.endswith('.py') and original.endswith('.py'):
+                        all_text = insert_code(postfile, original, kind='postfix')
+                        with open(original, 'w') as f:
+                            f.write(all_text)
+                        os.remove(postfile)
+                        puts(
+                            f'Postfixing python code to {os.path.basename(original)}', stream=stream)
+                    else:
+                        postfix_text(postfile, original)
+                        puts(f'Postfixing text to {os.path.basename(original)}', stream=stream)
                 else:
-                    postfix_text(postfile, original)
-                    print('Postfixing', original)
+                    raise ValueError(f'Original file not found for specified postfix: {postfile}')
 
-            else:
-                raise ValueError(f'Original file not found for specified postfix: {postfile}')
+        with indent(4):
+            for prefile in prefix_files:
+                original = os.path.join(dirpath, prefile.replace('_prefix', ''))
 
-        for prefile in prefix_files:
-            original = os.path.join(dirpath, prefile.replace('_prefix', ''))
-            print('Looking for original file:', original)
+                if os.path.exists(original):
+                    prefile = os.path.join(dirpath, prefile)
 
-            if os.path.exists(original):
-                prefile = os.path.join(dirpath, prefile)
-
-                if prefile.endswith('.py') and original.endswith('.py'):
-                    all_text = insert_code(prefile, original, kind='prefix')
-                    with open(original, 'w') as f:
-                        f.write(all_text)
-                    os.remove(prefile)
-                    print('Prefixing Python Code into', original)
+                    if prefile.endswith('.py') and original.endswith('.py'):
+                        all_text = insert_code(prefile, original, kind='prefix')
+                        with open(original, 'w') as f:
+                            f.write(all_text)
+                        os.remove(prefile)
+                        puts(
+                            f'Prefixing python code to {os.path.basename(original)}', stream=stream)
+                    else:
+                        prefix_text(prefile, original)
+                        puts(f'Prefixing text to {os.path.basename(original)}', stream=stream)
                 else:
-                    prefix_text(prefile, original)
-                    print('Prefixing', original)
-
-            else:
-                raise ValueError(f'Original file not found for specified prefix: {prefile}')
+                    raise ValueError(f'Original file not found for specified prefix: {prefile}')
 
 
 def postfix_text(src, dest):
