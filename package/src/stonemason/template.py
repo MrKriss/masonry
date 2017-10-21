@@ -6,17 +6,18 @@ import tempfile
 from pathlib import Path
 
 import git
-from clint.textui import colored, prompt, puts, validators
+from clint.textui import colored, prompt, puts, validators, indent
 
 from .postprocess import combine_file_snippets
+from .prompt import prompt_cookiecutter_variables
 from .render import render_cookiecutter
 from .resolution import create_dependency_graph, resolve
 from .utils import load_application_data, save_application_data
 
-from.prompt import prompt_cookiecutter_variables
+STDOUT = sys.stdout.write
 
 
-def initialise_project(project: Path, template=None, output_dir='.'):
+def initialise_project(project: Path, template=None, output_dir='.', interactive=True, stream=STDOUT):
 
     # Initialise path variables
     project_path = Path(project).resolve()
@@ -55,7 +56,9 @@ def initialise_project(project: Path, template=None, output_dir='.'):
 
     # Resolve dependencies for specified template
     template_order = [n.name for n in resolve(g[template])]
-    puts(f'Creating project from templates:\n\t{template_order}')
+    order_str = ' --> '.join(template_order)
+    puts(colored.yellow(f'Creating new project from templates: {order_str}'), stream=stream)
+    puts(stream=stream)
 
     # Initialise output structure to save state of project
     project_state = {}
@@ -65,24 +68,28 @@ def initialise_project(project: Path, template=None, output_dir='.'):
     # Cycle through templates and render them
     for name in template_order:
         template = template_paths[name].as_posix()
-        context_variables = prompt_cookiecutter_variables(template, project_state['variables'])
+        if interactive:
+            context_variables = prompt_cookiecutter_variables(template, project_state['variables'])
+        else:
+            context_variables_path = Path(template) / "cookiecutter.json"
+            context_variables = json.load(context_variables_path.open())
+
+        puts(f'Rendering "{name}" ...', stream=stream)
 
         output_project_dir, content = safe_render(
-            template, output_dir, context=context_variables
+            template, output_dir, context=context_variables, stream=stream
         )
 
         # This combines any prefix/postfix files added by the template to the originally named file
         # e.g. the cntent of 'Makefile_postfix' with be added to the end of the file 'Makefile',
         # and the cntent of 'MANIFEST_pretfix.in' with be added to the start of the file 'MANIFEST.in'
-        combine_file_snippets(output_project_dir)
+        combine_file_snippets(output_project_dir, stream=stream)
 
         if not (Path(output_project_dir) / '.git').exists() and 'repo' not in vars():
             # Initialise git repo
             repo = git.Repo.init(output_project_dir)
         else:
             repo = git.Repo(output_project_dir)
-
-        puts(f'Rendered: {template}')
 
         # Save state
         project_state['variables'].update(content)
@@ -103,7 +110,7 @@ def initialise_project(project: Path, template=None, output_dir='.'):
     return output_project_dir
 
 
-def add_template(templates: list, project_dir: Path):
+def add_template(templates: list, project_dir: Path, interactive=True, stream=STDOUT):
     """ Add a template to an existing project """
 
     project_dir = Path(project_dir).resolve()
@@ -142,28 +149,45 @@ def add_template(templates: list, project_dir: Path):
             template_orders.append(order)
             previous_templates.extend(order)
 
-    puts(f'Adding the following templates to project:\n\t{template_orders}')
+    order_strs = [' --> '.join(order) for order in template_orders]
+
+    puts(colored.yellow(f'Adding the following templates to project:'), stream=stream)
+    with indent(4):
+        for order in order_strs:
+            puts(colored.yellow(order), stream=stream)
+    puts(stream=stream)
 
     # Cycle through templates and render them
     for order_set in template_orders:
 
         for name in order_set:
             template = template_paths[name].as_posix()
-            context_variables = prompt_cookiecutter_variables(template, project_state['variables'])
-            project_state['variables'].update(context_variables)
+
+            if interactive:
+                context_variables = prompt_cookiecutter_variables(
+                    template, project_state['variables'])
+            else:
+                context_variables_path = Path(template) / "cookiecutter.json"
+                context_variables = json.load(context_variables_path.open())
+
+            # Only update dict with new variables.
+            for k, v in context_variables.items():
+                if k not in project_state['variables']:
+                    project_state['variables'][k] = v
+
+            puts(f'Rendering "{name}" ...', stream=stream)
 
             output_project_dir, content = safe_render(
                 template,
                 target_dir=project_dir.parent,
-                context=project_state['variables']
+                context=project_state['variables'],
+                stream=stream
             )
-
-            puts(f'Rendered: {template}')
 
             # This combines any prefix/postfix files added by the template to the originally named file
             # e.g. the cntent of 'Makefile_postfix' with be added to the end of the file 'Makefile',
             # and the cntent of 'MANIFEST_pretfix.in' with be added to the start of the file 'MANIFEST.in'
-            combine_file_snippets(output_project_dir)
+            combine_file_snippets(output_project_dir, stream=stream)
 
             # Save state
             project_state['variables'].update(content)
@@ -181,7 +205,7 @@ def add_template(templates: list, project_dir: Path):
             repo.index.commit(f"Add '{name}' template layer via stone mason.")
 
 
-def safe_render(template, target_dir, context):
+def safe_render(template, target_dir, context, stream=STDOUT):
     """Safely Render a new template by first making a backup to roll back to if needed."""
 
     # Copy current directory to temp backup location
@@ -197,13 +221,14 @@ def safe_render(template, target_dir, context):
         )
     except Exception as e:
         # Rollback
-        print("The following error occurs during templating, Rolling back to last stable state.")
-        print(e)
+        puts(colored.red("An error occured during templating, Rolling back to last stable state."), stream=stream)
         shutil.rmtree(target_dir)
         shutil.copytree(backup, target_dir)
-        print(f'Copied {backup_dir} to {target_dir}')
-        raise(e)
+        with indent(4):
+            puts(f'Restored {backup_dir} to {target_dir}', stream=stream)
+            puts(colored.red(f"Traceback: \n{e}"), stream=stream)
+        sys.exit()
 
-    shutil.rmtree(backup_dir.as_posix())
+    # shutil.rmtree(backup_dir.as_posix())
 
     return output_dir, content

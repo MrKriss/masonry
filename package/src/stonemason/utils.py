@@ -1,9 +1,13 @@
 
+import json
+import logging
 import os
+import shlex
+import subprocess
 from itertools import dropwhile
 from pathlib import Path
-import logging
-import json
+
+from clint.textui import colored, indent, puts
 
 
 def load_application_data(location=None):
@@ -80,3 +84,16 @@ def setup_logger(name=__name__, logfile=None, level=logging.DEBUG):
 
     logger.debug("logger set up. level=%d", level)
     return logger
+
+
+def run_and_capture(command, give_feedback=True):
+
+    p = subprocess.run(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    if p.returncode != 0 and give_feedback:
+        puts(colored.red('Error in executing "%s"' % command))
+        puts(colored.red(p.stderr.decode().strip()))
+    elif p.returncode == 0 and give_feedback:
+        puts(colored.green('Executed "%s"' % command))
+
+    return p
