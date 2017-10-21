@@ -41,7 +41,6 @@ htmlcov/
 .coverage
 .coverage.*
 .cache
-nosetests.xml
 coverage.xml
 *,cover
 .hypothesis/
@@ -64,20 +63,11 @@ instance/
 # Sphinx documentation
 docs/_build/
 
-# PyBuilder
-target/
+# mkdocs documentation
+site/
 
 # Jupyter Notebook
 .ipynb_checkpoints
-
-# pyenv
-.python-version
-
-# celery beat schedule file
-celerybeat-schedule
-
-# SageMath parsed files
-*.sage.py
 
 # dotenv
 .env
@@ -87,15 +77,10 @@ celerybeat-schedule
 venv/
 ENV/
 
-# Spyder project settings
+# Various IDE project settings files
 .spyderproject
 .spyproject
-
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
+.vscode
 
 # mypy
 .mypy_cache/

@@ -5,6 +5,7 @@ channels:
 dependencies:
 # Core 
 - python={{cookiecutter.python_version}}
+- python-dotenv
 # 3rd Party
 {%- set python_libs = cookiecutter.python_libraries.split(' ') %}
 {%- if python_libs != "NONE" %}

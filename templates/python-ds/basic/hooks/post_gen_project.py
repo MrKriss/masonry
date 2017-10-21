@@ -1,9 +1,9 @@
-""" Hooks to create a new conda environment with the latest version of common libraries 
+""" Hooks to create a new conda environment with the latest version of common libraries
 
 """
 
-import subprocess
-import shlex
+from clint.textui import indent, puts
+from stonemason.utils import run_and_capture
 
 # The string in these variables will be overriden by cookiecutter
 PROJECT_NAME = "{{cookiecutter.project_name|lower|replace(' ', '_')}}"
@@ -12,19 +12,17 @@ PYTHON_LIBRARIES = "{{cookiecutter.python_libraries}}"
 if PYTHON_LIBRARIES == "NONE":
     PYTHON_LIBRARIES = ""
 
+CORE_LIBS = "python-dotenv"
+
 # Create the strings for commands to run, substituting with the values from cookiecutter
-conda_install_cmd_tpl = "conda create -y -n {project_name} python={python_version} {python_libraries}"
-conda_install_cmd = conda_install_cmd_tpl.format(project_name=PROJECT_NAME,
-                                                 python_version=PYTHON_VERSION,
-                                                 python_libraries=PYTHON_LIBRARIES)
-conda_save_env_cmd = "conda env export -n {project_name} -f frozen_environment.yml".format(
-    project_name=PROJECT_NAME)
+conda_install_cmd = (f"conda create -y -n {PROJECT_NAME} python={PYTHON_VERSION} "
+                     f"{CORE_LIBS} {PYTHON_LIBRARIES}")
 
-# Execute command with subprocess module
-print('\nInstalling conda environment for %s ...\n' % PROJECT_NAME)
-subprocess.run(shlex.split(conda_install_cmd))
-print('\nFinished installing conda environment for %s \n' % PROJECT_NAME)
+conda_save_env_cmd = f"conda env export -n {PROJECT_NAME} -f frozen_environment.yml"
 
-print('\nSaving snapshot of conda environment to "frozen_environment.yml" ... \n')
-subprocess.run(shlex.split(conda_save_env_cmd))
-print('\nComplete!\n')
+# Use clint library to frmat console output
+with indent(4):
+    puts('Create new conda environment...')
+    p = run_and_capture(conda_install_cmd)
+    puts('Snapshot conda environment...')
+    p = run_and_capture(conda_save_env_cmd)
