@@ -3,6 +3,11 @@ import inquirer
 from pathlib import Path
 import json
 
+IGNORED_DIRS = [
+    '__pycache__',
+    '.git'
+]
+
 
 def prompt_init_project(project_templates):
     """Return the choice of project to intialise"""
@@ -34,7 +39,8 @@ def prompt_add_template(project_template_root, project_state):
     paths = project_template_root.iterdir()
 
     remaining_template_paths = {
-        p.name: p for p in paths if p.is_dir() and p.name not in previous_templates
+        p.name: p for p in paths
+        if p.is_dir() and p.name not in previous_templates and p.name not in IGNORED_DIRS
     }
 
     print(remaining_template_paths.keys())
@@ -90,4 +96,3 @@ def prompt_cookiecutter_variables(template, context_variables):
     answers = inquirer.prompt(questions)
 
     return answers
-
