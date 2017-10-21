@@ -20,7 +20,6 @@ def add_parse_args(old_file):
         for line in old_fh:
             new_lines.append(line)
             if pattern.match(line):
-                print(line)
                 new_lines.append(next(old_fh))
                 new_lines.append("\n")
                 new_lines.append("    args = get_parser().parse_args(args)\n")
