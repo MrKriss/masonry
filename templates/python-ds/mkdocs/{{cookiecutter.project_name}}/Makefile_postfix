@@ -1,0 +1,7 @@
+
+.PHONY:docs 
+# Build and serve the documentation locally
+docs: 
+	mkdocs build
+
+
