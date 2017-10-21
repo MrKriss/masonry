@@ -2,9 +2,15 @@
 
 A tool for working with composable project templates. 
 
+Commands:
+    init  - initialise a new project 
+    add   - add a template to an existing project
+    check - check a particular project or template layer renders correctly
+
 Usage:
     mason init [-v] [-o DIR] [PROJECT]
     mason add [-v] [-o DIR] [TEMPLATE ...]
+    mason check [-v] [PROJECT]
     mason (-h | --help)
     mason --version
 
@@ -62,6 +68,13 @@ def validate_args(args):
             str: object})
 
     elif args['add']:
+        schema = Schema({
+            # 'TEMPLATE': And(str, error='TEMPLATE should be specified'),
+            # '--output': And(mason_file_exists, error='The .mason was not detected for project.'
+            #                                          ' Specofy location with --output option.'),
+            str: object})
+
+    elif args['check']:
         schema = Schema({
             # 'TEMPLATE': And(str, error='TEMPLATE should be specified'),
             # '--output': And(mason_file_exists, error='The .mason was not detected for project.'

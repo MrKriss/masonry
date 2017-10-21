@@ -1,15 +1,15 @@
 """Main Entry point to stonemason"""
 
-from .cli import parse_and_validate_args, parse_project_argument
-from .template import initialise_project, add_template
-from .utils import load_application_data
-from .prompt import prompt_init_project, prompt_add_template
-
-import os
 import json
+import os
 from pathlib import Path
 
-from .utils import setup_logger
+from .cli import parse_and_validate_args, parse_project_argument
+from .prompt import prompt_add_template, prompt_init_project
+from .template import add_template, initialise_project
+from .utils import load_application_data, setup_logger
+
+from.check import check_templates
 
 
 def main(args=None):
@@ -57,7 +57,7 @@ def main(args=None):
         mason_vars = project_dir / '.mason'
 
         if not mason_vars.exists():
-            raise IOError(f'A ".mason" file was not detected int he output directoty {project_dir}')
+            raise IOError(f'A ".mason" file was not detected in the output directoty {project_dir}')
 
         with mason_vars.open('r') as f:
             project_state = json.load(f)
@@ -72,6 +72,26 @@ def main(args=None):
         # Add the right template
         add_template(templates=args['TEMPLATE'],
                      project_dir=args['--output'])
+
+    elif args['check']:
+
+        template = None
+
+        # Find project to test
+        if not args['PROJECT']:
+            if project_templates:
+                # Launch inquire
+                template_collection_path = prompt_init_project(project_templates)
+            else:
+                raise ValueError("No known projects to choose from. "
+                                 "Add one using the PROJECT argument.")
+        else:
+            project_dir, template = parse_project_argument(args['PROJECT'])
+
+        # Check all template layers
+        # Add the right template
+        check_templates(template_collection_path=template_collection_path,
+                        template=template)
 
 
 if __name__ == '__main__':
