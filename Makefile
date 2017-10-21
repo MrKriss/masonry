@@ -13,6 +13,7 @@ update:
 
 # Reset env based on frozen version of libraries in frozen_environment file
 rollback:
+	conda env remove -n stone-mason
 	conda env update -n stone-mason -f package/frozen_environment.yml
 
 .PHONY:test
