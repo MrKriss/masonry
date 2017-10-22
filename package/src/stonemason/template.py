@@ -227,6 +227,7 @@ def safe_render(template, target_dir, context, stream=STDOUT):
         with indent(4):
             puts(f'Restored {backup_dir} to {target_dir}', stream=stream)
             puts(colored.red(f"Traceback: \n{e}"), stream=stream)
+        raise e
         sys.exit()
 
     # shutil.rmtree(backup_dir.as_posix())
