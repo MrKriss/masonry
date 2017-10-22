@@ -82,7 +82,7 @@ def setup_logger(name=__name__, logfile=None, level=logging.DEBUG):
         filehandler.setFormatter(formatter)
         logger.addHandler(filehandler)
 
-    logger.debug("logger set up. level=%d", level)
+    logger.debug("logger set up. level=%s", level)
     return logger
 
 
