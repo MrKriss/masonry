@@ -7,4 +7,4 @@ test:
 .PHONY:debug
 # Run tests with Pytest with debug on 
 debug: 
-	pytest --verbose -s --pudb --cov-report term --cov={{cookiecutter.package_name}} package/tests
+	pytest --verbose -s --pdb --cov-report term --cov={{cookiecutter.package_name}} package/tests
