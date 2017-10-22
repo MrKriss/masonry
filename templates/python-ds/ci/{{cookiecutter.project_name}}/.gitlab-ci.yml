@@ -3,7 +3,6 @@ image: {{cookiecutter.docker_namespace}}/{{cookiecutter.project_name}}:latest
 stages:
     - test
     - build
-    - deploy
 
 install and test source:
     stage: test
@@ -13,22 +12,6 @@ install and test source:
       - python setup.py install
       # Test Package
       - pytest
-    tags:
-      - docker
-
-build conda package:
-    stage: build
-    script:
-      - cd package/
-      # Build Package
-      - conda build recipes/ --output-folder ../conda-package
-    artifacts:
-        paths:
-          - $CI_PROJECT_DIR/conda-package
-    when: on_success
-    only:
-      - tags
-      - master
     tags:
       - docker
 
@@ -46,30 +29,3 @@ build src dist:
       - master
     tags:
       - docker
-
-deploy:
-    stage: deploy
-    environment: FTP Site
-    script:
-        # Get Version String
-        - PKG_VERSION=$(git describe --abbrev=0 --always)
-        - PKG_NAME={{cookiecutter.project_name}}-$PKG_VERSION/
-        - echo "$PKG_NAME"
-        # Upload source distribution
-        - curl -T $CI_PROJECT_DIR/package/dist/*.zip
-                  ftp://ftp.mango-solutions.com/Releases/$PKG_NAME
-                  --ftp-create-dirs
-                  --user $FTP_USERNAME:$FTP_PASSWORD
-        # Upload conda package directrory
-        - cd $CI_PROJECT_DIR/conda-package
-        - find . -type f -exec curl -T {} ftp://ftp.mango-solutions.com/Releases/$PKG_NAME/conda-package/{}
-                                --user $FTP_USERNAME:$FTP_PASSWORD
-                                --ftp-create-dirs \;
-        # Upload docs
-        - cd $CI_PROJECT_DIR/docs
-        - find . -type f -exec curl -T {} ftp://ftp.mango-solutions.com/Releases/$PKG_NAME/{}
-                                --user $FTP_USERNAME:$FTP_PASSWORD
-                                --ftp-create-dirs \;
-    when: manual
-    only:
-      - tags
