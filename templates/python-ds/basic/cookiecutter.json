@@ -8,7 +8,7 @@
         "ipython",
         "jupyter",
         "jupyter pandas matplotlib",
-        "jupyter pandas matplotlib seaborn statsmodels",
-        "jupyter pandas matplotlib seaborn scikit-learn"
+        "jupyter pandas matplotlib seaborn scikit-learn",
+        "jupyter pandas matplotlib seaborn scikit-learn statsmodels"
     ]
 }
