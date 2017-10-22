@@ -7,9 +7,8 @@ dependencies:
 - python={{cookiecutter.python_version}}
 - python-dotenv
 # 3rd Party
-{%- set python_libs = cookiecutter.python_libraries.split(' ') %}
-{%- if python_libs != "NONE" %}
-{%- for lib in python_libs %}
+{%- for lib in cookiecutter.python_libraries.split(' ') %}
+{%- if lib != "NONE" %}
 - {{lib}}
-{%- endfor %}
 {% endif %}
+{%- endfor %}

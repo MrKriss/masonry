@@ -12,17 +12,13 @@ PYTHON_LIBRARIES = "{{cookiecutter.python_libraries}}"
 if PYTHON_LIBRARIES == "NONE":
     PYTHON_LIBRARIES = ""
 
-CORE_LIBS = "python-dotenv"
-
 # Create the strings for commands to run, substituting with the values from cookiecutter
-conda_install_cmd = (f"conda create -y -n {PROJECT_NAME} python={PYTHON_VERSION} "
-                     f"{CORE_LIBS} {PYTHON_LIBRARIES}")
-
+conda_install_cmd = ("conda env create -f dev_environment.yml")
 conda_save_env_cmd = f"conda env export -n {PROJECT_NAME} -f frozen_environment.yml"
 
 # Use clint library to frmat console output
 with indent(4):
-    puts('Create new conda environment...')
+    puts("Create new conda environment...")
     p = run_and_capture(conda_install_cmd)
-    puts('Snapshot conda environment...')
+    puts("Snapshot conda environment...")
     p = run_and_capture(conda_save_env_cmd)
