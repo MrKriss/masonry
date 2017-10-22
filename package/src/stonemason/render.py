@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 def render_cookiecutter(
         template, checkout=None, no_input=False, extra_context=None,
         replay=False, overwrite_if_exists=False, output_dir='.',
-        config_file=None, default_config=False):
+        config_file=None, default_config=False, password=None):
     """ Render cookiecutter template and return path and rendered context
 
     The API equivalent to using Cookiecutter at the command line.
@@ -46,12 +46,13 @@ def render_cookiecutter(
         default_config=default_config,
     )
 
-    repo_dir = determine_repo_dir(
+    repo_dir, cleanup = determine_repo_dir(
         template=template,
         abbreviations=config_dict['abbreviations'],
         clone_to_dir=config_dict['cookiecutters_dir'],
         checkout=checkout,
         no_input=no_input,
+        password=password
     )
 
     template_name = os.path.basename(os.path.abspath(repo_dir))
@@ -83,11 +84,11 @@ def render_cookiecutter(
         dump(config_dict['replay_dir'], template_name, context)
 
     # Create project from local context and project template.
-    project_dir = generate_files(
+    result = generate_files(
         repo_dir=repo_dir,
         context=context,
         overwrite_if_exists=overwrite_if_exists,
         output_dir=output_dir
     )
 
-    return project_dir, context['cookiecutter']
+    return result, context['cookiecutter']
