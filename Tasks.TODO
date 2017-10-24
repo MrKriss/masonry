@@ -5,6 +5,9 @@ Bugs:
     ✔ Reports files are moved when they are not in package template @done (9/6/2017, 12:14:47 AM)
     ✔ templates applied is not filtered for previous templates in .mason field @done (9/12/2017, 11:07:01 PM)
 
+    ☐ If there is an error in template basic creation the parent dir is replaced. not good 
+    ☐ Docker template needs a post hook to strip hash from core lib names so can install cross platform
+
 Documentation:
     ✔ Update README with project description @done (8/29/2017, 11:26:18 PM)
     ✔ Update README with motivation @done (8/29/2017, 11:26:30 PM)
@@ -40,7 +43,7 @@ Tests:
         ✔ Test specifying multiple template @done (7/24/2017, 11:58:58 PM)
 
     template:
-        ☐ Test each template can be rendered in its own right
+        ✘ Test each template layer con be rendered in its own right @cancelled (10/21/2017, 10:51:25 PM)
         ✔ ability to insert before or after main code body in python filess @done (9/3/2017, 6:09:16 PM)
 
     git commiting:
@@ -54,12 +57,17 @@ Deployment:
 Templates to add to examples:
     python-ds:
         ✔ logging @done (9/6/2017, 12:15:12 AM)
-        ☐ cli
+        ✔ cli @done (2017-10-24 15:40:40)
         ☐ constructor
-        ☐ docker
+
+        ✔ documentation @done (2017-10-15 14:16:58)
+        ✔ docker @done (9/12/2017, 11:45:22 PM)
         ✔ python package @done (9/6/2017, 12:15:36 AM)
         ✔ conda package @done (7/18/2017, 10:43:01 PM)
-        ☐ gitlab-ci / travis-ci / appveyor / circle-ci
+        ✔ gitlab-ci @done (2017-10-24 15:40:50)
+        ☐ travis-ci 
+        ☐ appveyor 
+        ☐ circle-ci 
     python-dev:
         ☐ flask
         ☐ logging
