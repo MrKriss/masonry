@@ -9,9 +9,9 @@ python:
 env:
   global:
     # List package dependencies for conda
-    - CONDA_DEPS="cookiecutter docopt gitpython clint pytest pytest-cov coverage"
+    - CONDA_DEPS="docopt gitpython clint pytest pytest-cov coverage"
     # List package dependencies for pip 
-    - PIP_DEPS="inquirer schema ruamel.yaml"
+    - PIP_DEPS="cookiecutter inquirer schema ruamel.yaml"
     # package name for test invocation
     - PACKAGENAME="masonry"
 
