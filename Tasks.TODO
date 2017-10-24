@@ -29,7 +29,7 @@ Features:
     Management:
         ☐ Add a cache command to add a template to those saved
         ☐ Add an update command to update all template collections for projects.
-        ☐ Add a validate command to check all template layers
+        ✔ Add a check command to check all template layers @done (2017-10-24 22:22:40)
 
 Tests:
     init command:
