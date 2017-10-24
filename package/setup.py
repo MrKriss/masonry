@@ -19,17 +19,16 @@ EMAIL = 'chris.j.musselle@gmail.com'
 AUTHOR = 'Chris Musselle'
 
 REQUIRED = [
-    'cookiecutter',
+    'cookiecutter>=1.6',
     'docopt',
     'schema',
     'inquirer',
-    'ruamel.yaml',
+    'ruamel.yaml>=1.15',
     'gitpython',
     'clint'
 ]
 
 repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-print(repo_root)
 # Import the README and use it as the long-description.
 # Note: this will only work if 'README.rst' is present in your MANIFEST.in file!
 with io.open(os.path.join(repo_root, 'README.rst'), encoding='utf-8') as f:
@@ -94,7 +93,7 @@ setup(
     classifiers=[
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.6',
         'Intended Audience :: Developers',
