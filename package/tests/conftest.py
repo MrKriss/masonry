@@ -2,8 +2,6 @@
 
 import pytest
 from pathlib import Path
-import json
-
 
 TEST_DIR = Path(__file__).parent
 
