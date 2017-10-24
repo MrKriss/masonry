@@ -1,10 +1,7 @@
 
 .PHONY:docker
-# Build Docker images and upload to dockerhub
+# Build Docker images locally and upload to dockerhub
 docker:
 	docker login
-	cp package/frozen_environment.yml docker/frozen_environment.yml
 	docker build -t {{cookiecutter.docker_namespace}}/{{cookiecutter.project_name}} -f docker/dockerfile docker/
 	docker push {{cookiecutter.docker_namespace}}/{{cookiecutter.project_name}}
-	rm docker/frozen_environment.yml
-
