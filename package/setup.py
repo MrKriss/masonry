@@ -25,7 +25,8 @@ REQUIRED = [
     'inquirer',
     'ruamel.yaml>=0.15',
     'gitpython',
-    'clint'
+    'clint',
+    'py'
 ]
 
 repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
