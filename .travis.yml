@@ -37,7 +37,7 @@ install:
 - cd ..
 
 script:
-- pytest --verbose --cov-report term --cov=$PACKAGENAME --ignore=package/tests/data/ package/tests/
+- pytest --verbose --cov-report term --cov=$PACKAGENAME --ignore=package/tests/data/ --ignore package/tests/example_templates package/tests/
 
 after_success:
 - codecov
