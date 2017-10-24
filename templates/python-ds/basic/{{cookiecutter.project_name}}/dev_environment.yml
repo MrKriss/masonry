@@ -10,5 +10,5 @@ dependencies:
 {%- for lib in cookiecutter.python_libraries.split(' ') %}
 {%- if lib != "NONE" %}
 - {{lib}}
-{% endif %}
+{%- endif %}
 {%- endfor %}
