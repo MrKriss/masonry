@@ -4,10 +4,10 @@ import fnmatch
 import os
 
 from .utils import rindex
-from clint.textui import puts, indent, colored
+from clint.textui import puts, indent, STDOUT
 
 
-def combine_file_snippets(project_dir, stream):
+def combine_file_snippets(project_dir, stream=STDOUT):
     """ Recusively search for files ending in posfix/prefix and join them to their originals """
 
     for dirpath, dirnames, filenames in os.walk(project_dir):
@@ -34,7 +34,8 @@ def combine_file_snippets(project_dir, stream):
                             f.write(all_text)
                         os.remove(postfile)
                         puts(
-                            f'Postfixing python code to {os.path.basename(original)}', stream=stream)
+                            f'Postfixing python code to {os.path.basename(original)}',
+                            stream=stream)
                     else:
                         postfix_text(postfile, original)
                         puts(f'Postfixing text to {os.path.basename(original)}', stream=stream)
