@@ -1,18 +1,18 @@
-# Stonemason
+# Masonry
 
-[![build status](http://img.shields.io/travis/MrKriss/stonemason/master.svg?style=flat)](https://travis-ci.org/MrKriss/stonemason) 
-[![codecov](https://codecov.io/gh/MrKriss/stonemason/branch/master/graph/badge.svg)](https://codecov.io/gh/MrKriss/stonemason)
+[![build status](http://img.shields.io/travis/MrKriss/masonry/master.svg?style=flat)](https://travis-ci.org/MrKriss/masonry) 
+[![codecov](https://codecov.io/gh/MrKriss/masonry/branch/master/graph/badge.svg)](https://codecov.io/gh/MrKriss/masonry)
 
 > A command line tool for composable project templating. 
 
-Stonemason aims to reduce the need to write boiler plate code and setup files when starting or 
+Masonry aims to reduce the need to write boiler plate code and setup files when starting or 
 extending a project. It does so by allowing [cookiecutter](https://github.com/audreyr/cookiecutter) 
 templates to be combined in a series of layers to build up a projects file structure.  
 
 Applying different combinations of these template building blocks then allow for a greater variety of 
 project types to be more easily supported, compared to defining each template permutation separately. 
 
-Stonemason also includes a cli application `mason` that makes applying and managing these template 
+Masonry also includes a cli application `mason` that makes applying and managing these template 
 layers straight forward.  
 
 # Installation 
@@ -37,7 +37,7 @@ project-templates directory for examples).
 # Creating and Using Template Layers for a Custom Project
 
 The individual template layers are themselves cookiecutter templates. To combine several of these 
-into a project to use with stonemason:
+into a project to use with masonry:
 
 * Each cookiecutter template should be in its own directory named after the templates purpose
 * All these are then held in a parent directory, which is named after the project type all these 

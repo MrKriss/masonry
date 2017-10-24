@@ -7,7 +7,7 @@ import os
 
 from conftest import TEST_DIR
 
-from stonemason import main
+from masonry import main
 
 from cookiecutter.exceptions import FailedHookException, UndefinedVariableInTemplate
 
@@ -22,7 +22,7 @@ def init_simple_project(tmpdir_factory):
     # Set arguments
     args = f"init -o {temp_output_path} {template_path}"
 
-    from stonemason import main
+    from masonry import main
     # Run from entry point
     main.main(args=args)
 

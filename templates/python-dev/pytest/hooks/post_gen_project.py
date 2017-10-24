@@ -7,7 +7,7 @@ import subprocess
 import shlex
 import pathlib
 import shutil
-from stonemason.utils import prefix, postfix
+from masonry.utils import prefix, postfix
 
 import os
 

@@ -13,7 +13,7 @@ env:
     # List package dependencies for pip 
     - PIP_DEPS="inquirer schema ruamel.yaml"
     # package name for test invocation
-    - PACKAGENAME="stonemason"
+    - PACKAGENAME="masonry"
 
 before_install:
 # Here we download miniconda and install the dependencies

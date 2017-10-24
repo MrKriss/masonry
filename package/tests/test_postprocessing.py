@@ -9,7 +9,7 @@ import itertools
 
 from conftest import TEST_DIR
 
-from stonemason.postprocess import insert_code, combine_file_snippets
+from masonry.postprocess import insert_code, combine_file_snippets
 
 
 ns = range(1, 6)

@@ -14,7 +14,7 @@ def test_init_with_project(tmpdir):
     # Set arguments
     args = f"init -o {output_path} {TEST_DIR}/example_templates/python_project"
 
-    from stonemason import main
+    from masonry import main
     # Run from entry point
     main.main(args=args)
 
@@ -56,7 +56,7 @@ def test_init_with_project_and_template(tmpdir, no_prompts):
     # Set arguments
     args = f"init -o {output_path} {TEST_DIR}/example_templates/python_project/pytest"
 
-    from stonemason import main
+    from masonry import main
     # Run from entry point
     main.main(args=args)
 

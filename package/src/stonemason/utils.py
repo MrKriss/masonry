@@ -16,7 +16,7 @@ def load_application_data(location=None):
     if not location:
         location = os.getenv("HOME")
 
-    app_data_dir = Path(os.path.join(location, ".stonemason"))
+    app_data_dir = Path(os.path.join(location, ".masonry"))
 
     template_metadata_path = app_data_dir / "templates.json"
 
@@ -34,7 +34,7 @@ def save_application_data(obj, location=None):
     if not location:
         location = os.getenv("HOME")
 
-    app_data_dir = Path(os.path.join(location, ".stonemason"))
+    app_data_dir = Path(os.path.join(location, ".masonry"))
     app_data_dir.mkdir(exist_ok=True)
 
     template_metadata_path = app_data_dir / "templates.json"

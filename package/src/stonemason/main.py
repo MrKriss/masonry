@@ -1,4 +1,4 @@
-"""Main Entry point to stonemason"""
+"""Main Entry point to masonry"""
 
 import json
 import os

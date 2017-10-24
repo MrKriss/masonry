@@ -3,9 +3,9 @@ import json
 
 import pytest
 
-from stonemason.resolution import create_dependency_graph, resolve
+from masonry.resolution import create_dependency_graph, resolve
 import py.path
-from stonemason.template import initialise_project, add_template
+from masonry.template import initialise_project, add_template
 
 
 TEMPLATE_COLLECTION_PATH = py.path.local(__file__).dirpath()

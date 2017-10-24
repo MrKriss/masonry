@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='stonemason',
+    name='masonry',
     description='A command line tool for composable project templating',
     author='Chris Musselle',
     author_email='chris.j.musselle@gmail.com',
@@ -14,7 +14,7 @@ setup(
     # the `command_line_entry_point()` function in the `command_line` module of `mypackage`
     entry_points={
         'console_scripts': [
-            'mason=stonemason.main:main'
+            'mason=masonry.main:main'
         ]
     },
     # include_package_data=True,

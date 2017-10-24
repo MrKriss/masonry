@@ -18,7 +18,7 @@ def init_base_project(tmpdir_factory):
     # Set arguments
     args = f"init -o {temp_output_path} {template_path}"
 
-    from stonemason import main
+    from masonry import main
     # Run from entry point
     main.main(args=args)
 
@@ -39,7 +39,7 @@ def test_adding_single_project(init_base_project):
     # Set arguments
     args = f"add -o {current_project_path.as_posix()} pytest"
 
-    from stonemason import main
+    from masonry import main
     # Run from entry point
     main.main(args=args)
 
@@ -90,7 +90,7 @@ def test_adding_multiple_projects(init_base_project):
     # Set arguments
     args = f"add -o {current_project_path.as_posix()} conda"
 
-    from stonemason import main
+    from masonry import main
     # Run from entry point
     main.main(args=args)
 

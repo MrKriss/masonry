@@ -7,7 +7,7 @@ Install new libraries according to dev_environment.yml
 from pathlib import Path
 import shutil
 
-from stonemason.utils import run_and_capture
+from masonry.utils import run_and_capture
 from clint.textui import indent, colored, puts
 
 

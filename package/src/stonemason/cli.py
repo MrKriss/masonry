@@ -1,4 +1,4 @@
-"""Stonemason
+"""Masonry
 
 A tool for working with composable project templates. 
 

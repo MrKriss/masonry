@@ -43,5 +43,5 @@ dependencies:
     - readchar==0.7
     - ruamel.yaml==0.15.33
     - schema==0.6.6
-    - stonemason==0.0.0
+    - masonry==0.0.0
 prefix: /Users/cmusselle/anaconda3/envs/sm-test

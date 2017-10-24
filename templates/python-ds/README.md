@@ -1,6 +1,6 @@
 # Python Data Science Template Collection
 
-These templates form a set of template layers for use with the stonemason utility. 
+These templates form a set of template layers for use with the masonry utility. 
 
 ## Requirements 
 

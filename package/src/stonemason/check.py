@@ -3,8 +3,8 @@ import json
 
 import py.path
 
-from stonemason.resolution import create_dependency_graph, resolve
-from stonemason.template import add_template, initialise_project
+from masonry.resolution import create_dependency_graph, resolve
+from masonry.template import add_template, initialise_project
 
 from contextlib import redirect_stdout
 from clint.textui import puts, indent, colored
