@@ -23,7 +23,7 @@ REQUIRED = [
     'docopt',
     'schema',
     'inquirer',
-    'ruamel.yaml>=1.15',
+    'ruamel.yaml>=0.15',
     'gitpython',
     'clint'
 ]
