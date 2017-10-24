@@ -17,8 +17,11 @@ layers straight forward.
 
 # Installation 
 
-Pip and conda packages coming soon. 
+    pip install masonry
 
+## Key Dependencies:
+
+* `cookiecutter` >= 1.6
 
 # Usage 
 
