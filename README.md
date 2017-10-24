@@ -120,12 +120,12 @@ Stomemason provides a middle ground of breaking up these components of the proje
 
 It also has the major benefit of being able to apply any additional layers **after** the initial 
 project was created. So if you didn't see the need to also create a conda package for your project 
-till now? No problem, just apply the conda-packge layer to the current project (assuming you have 
+till now? No problem, just apply the conda-package layer to the current project (assuming you have 
 defined one of course!).
 
 # Additional Features
 
-* Pre and post project creation hocks used by cookiecutter are supported.
+* Pre and post project creation hooks used by cookiecutter are supported.
 * Cookiecutter variables are remembered and reused between template layers, meaning you only need 
 to specify values for new variables. 
 * If project path is omitted, `mason init` allows you to interactively select one from a list of previously
@@ -136,7 +136,7 @@ of templates that can still be added to the project.
 library.
   
 
-# Other related Projects
+# Other Related Projects
 
 * [python boilerplate](https://www.python-boilerplate.com) A web application for interactively filling 
 out a template for a new project. 
@@ -147,5 +147,5 @@ out a template for a new project.
 colourful UI, and one of the inspirations for this project. 
 
 * [usethis](https://github.com/r-lib/usethis) A project in the R community looking at similar ideas 
-around project template composeability, and being able to add them as needed on a project. 
+around project template composability, and being able to add them as needed on a project. 
 
