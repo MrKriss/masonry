@@ -107,5 +107,5 @@ ENV/
 .vscode
 
 # Dont commit local analysis dev work in progress
-analysis/
-output/
+/analysis
+/output
