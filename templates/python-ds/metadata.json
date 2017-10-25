@@ -21,7 +21,8 @@
             "package"
         ],
         "conda-recipe": [
-            "package"
+            "package",
+            "pytest"
         ],
         "docker": [],
         "deploy": [
