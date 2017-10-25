@@ -43,8 +43,6 @@ def prompt_add_template(project_template_root, project_state):
         if p.is_dir() and p.name not in previous_templates and p.name not in IGNORED_DIRS
     }
 
-    print(remaining_template_paths.keys())
-
     remaining_templates_names = list(remaining_template_paths.keys())
     remaining_templates_names.sort()
 
