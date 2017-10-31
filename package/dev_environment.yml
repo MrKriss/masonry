@@ -1,4 +1,4 @@
-name: stone-mason
+name: masonry
 channels:
 - defaults
 - conda-forge
