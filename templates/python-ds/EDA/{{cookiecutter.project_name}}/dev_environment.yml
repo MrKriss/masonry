@@ -11,4 +11,7 @@ dependencies:
 {%- if lib != "NONE" %}
 - {{lib}}
 {%- endif %}
+{%- if lib == "jupyter" %}
+- jupyter_contrib_nbextensions
+{%- endif %}
 {%- endfor %}
