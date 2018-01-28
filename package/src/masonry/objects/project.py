@@ -12,7 +12,7 @@ import json
 
 from .template import Template
 
-from ..resolution import create_dependency_graph, resolve
+from .resolution import DependencyGraph
 from ..prompt import prompt_cookiecutter_variables
 
 
@@ -35,6 +35,12 @@ class Project:
         self.metadata_path = self.template_directory / 'metadata.json'
         self.metadata = json.load(open(self.metadata_path))
 
+        # Create graph of template dependencies
+        self.g = DependencyGraph(
+            self.metadata,
+            template_list=self.remaining_templates
+        )
+
         if masonry_config is None:
             self.masonry_config = {}
         else:
@@ -55,10 +61,22 @@ class Project:
 
     def add_template(self, name, variables):
 
-        self._check_all_variables_are_new(variables)
-        variables.update(self.template_variables)
+        # Find all template dependencies
+        templates_to_apply = self.g.get_dependencies(name)
+
+        # Render each template in turn
+        for template in templates_to_apply:
+            if template in self.applied_templates:
+                continue
+            self.render_template(template, variables)
+
+        self.template_variables.update(variables)
+
+    def render_template(self, name, variables):
 
         template_path = self.template_directory / name
+        variables.update(self.template_variables)
+
         template = Template(template_path, variables)
 
         template.render(output_dir=self.location)
@@ -78,7 +96,7 @@ class Project:
             key not in current_variables for key in variables.keys()
         )
         no_key_overlap = all(unique_keys)
-        assert no_key_overlap
+        # assert no_key_overlap
 
     #     # create it ------------------------
 
