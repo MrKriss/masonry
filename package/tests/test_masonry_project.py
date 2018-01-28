@@ -14,7 +14,7 @@ def project_templates_path():
     )
 
 
-def test_can_create_project_with_all_attributes(project_templates_path, tmpdir):
+def test_can_create_project_with_required_attributes(project_templates_path, tmpdir):
 
     masonry_config = {
         'other-project': 'some/path/to/it'
@@ -61,6 +61,9 @@ def test_can_create_project_with_default_template(project_templates_path, tmpdir
     assert created_file.check(file=True)
     content = created_file.read_text('utf8')
     assert variables['file1_text'] in content
+
+    assert project.applied_templates == ['first_layer']
+    assert 'first_layer' not in project.remaining_templates
 
 
 def test_can_add_template_layer_after_default_template(project_templates_path, tmpdir):
@@ -118,6 +121,31 @@ def test_can_determine_template_order_and_apply_them(project_templates_path, tmp
     assert created_file.check(file=True)
     content = created_file.read_text('utf8')
     assert second_layer_variables['file2_text'] in content
+
+    assert project.applied_templates == ['first_layer', 'second_layer', 'third_layer']
+    assert project.remaining_templates == []
+
+
+@pytest.mark.xfail
+def test_can_perform_file_postfix_merging(project_templates_path, tmpdir):
+
+    project = Project(project_templates_path)
+
+    init_variables = {
+        "project_name": "new-project",
+        "file1_text": "Hello World!"
+    }
+
+    project.initialise(output_dir=tmpdir.strpath, variables=init_variables)
+    project.add_template(name='third_layer', variables={})
+
+    project_path = tmpdir.join(init_variables['project_name'])
+    created_file = project_path.join('file_from_layer_2.txt')
+
+    assert project_path.check(dir=True)
+    assert created_file.check(file=True)
+    content = created_file.read_text('utf8')
+    assert 'Postfixed text' in content
 
     assert project.applied_templates == ['first_layer', 'second_layer', 'third_layer']
     assert project.remaining_templates == []
