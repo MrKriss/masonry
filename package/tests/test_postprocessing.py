@@ -6,7 +6,7 @@ import itertools
 
 from conftest import TEST_DIR
 
-from masonry.objects.postprocessors import CombineFileSnippetsPostprocessor
+from masonry.objects.postprocessors import CombinePostfixFileSnippets, CombinePrefixFileSnippets
 
 
 def test_combine_file_snippets_postprocessor_postfix(tmpdir):
@@ -23,14 +23,15 @@ def test_combine_file_snippets_postprocessor_postfix(tmpdir):
         shutil.copy(str(fp), str(dest_path))
 
     # WHEN combining files using the postprocessing rules
-    postprocessor = CombineFileSnippetsPostprocessor()
-    postprocessor.apply(tmpdir.strpath)
+    postprocessor = CombinePostfixFileSnippets(pattern='_postfix')
+    postprocessor.apply(dest_path)
 
     # THEN config_prefix.ini should be prefixed to config.ini
     target_path = TEST_DIR / Path('data/postprocessing_examples/output/result_config_postfix.ini')
     target = target_path.read_text()
     result_path = dest_path / 'config.ini'
     result = result_path.read_text()
+    print(result)
     assert target == result
 
     # THEN *_prefix and *_postfix files hould be removed as part of the processing
@@ -55,8 +56,8 @@ def test_combine_file_snippets_postprocessor_prefix(tmpdir):
         shutil.copy(str(fp), str(dest_path))
 
     # WHEN combining files using the postprocessing rules
-    postprocessor = CombineFileSnippetsPostprocessor()
-    postprocessor.apply(tmpdir.strpath)
+    postprocessor = CombinePrefixFileSnippets(pattern='_prefix')
+    postprocessor.apply(dest_path)
 
     # THEN config_prefix.ini should be prefixed to config.ini
     target_path = TEST_DIR / Path('data/postprocessing_examples/output/result_config_prefix.ini')
