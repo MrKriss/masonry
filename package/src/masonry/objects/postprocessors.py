@@ -4,37 +4,41 @@
 import ast
 import fnmatch
 import os
+from pathlib import Path
 
 
-class CombineFileSnippetsPostprocessor:
+class Preprocessor:
 
-    def __init__(self):
-        pass
+    def __init__(self, pattern):
+        self.pattern = pattern
 
-    def apply(self, project_dir):
+    def apply(self, dirpath):
 
-        for dirpath, dirnames, filenames in os.walk(project_dir):
+        dirpath = Path(dirpath)
 
-            if '.git' in dirnames:
-                dirnames.remove('.git')
+        glob_pattern = '*' + self.pattern + '*'
 
-            postfix_files = fnmatch.filter(filenames, '*_postfix*')
-            prefix_files = fnmatch.filter(filenames, '*_prefix*')
-            for postfile in postfix_files:
-                original = os.path.join(dirpath, postfile.replace('_postfix', ''))
+        filenames = [f for f in dirpath.glob(glob_pattern) if f.is_file()]
 
-                if os.path.exists(original):
-                    postfile = os.path.join(dirpath, postfile)
-                    self.postfix_text(postfile, original)
+        for f in filenames:
 
-            for prefile in prefix_files:
-                original = os.path.join(dirpath, prefile.replace('_prefix', ''))
+            original_fname = f.name.replace(self.pattern, '')
+            original = f.parent / original_fname
 
-                if os.path.exists(original):
-                    prefile = os.path.join(dirpath, prefile)
-                    self.prefix_text(prefile, original)
+            if os.path.exists(original):
+                print(original)
+                self.process(str(f), str(original))
 
-    def postfix_text(self, src, dest):
+    def process(self, src, dest):
+        raise NotImplementedError
+
+
+class CombinePostfixFileSnippets(Preprocessor):
+
+    def __init__(self, pattern='_postfix'):
+        super().__init__(pattern=pattern)
+
+    def process(self, src, dest):
         """ Add the content of src to the end of dest file and remove src file """
 
         with open(dest, 'a') as fout:
@@ -42,7 +46,13 @@ class CombineFileSnippetsPostprocessor:
                 fout.write(fin.read())
         os.remove(fin.name)
 
-    def prefix_text(self, src, dest):
+
+class CombinePrefixFileSnippets(Preprocessor):
+
+    def __init__(self, pattern='_prefix'):
+        super().__init__(pattern=pattern)
+
+    def process(self, src, dest):
         """ Add the content of src file path to the begining of dest file path and remove src """
 
         with open(src, 'a') as fout:
