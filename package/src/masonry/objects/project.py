@@ -15,6 +15,8 @@ from .template import Template
 from .resolution import DependencyGraph
 from ..prompt import prompt_cookiecutter_variables
 
+from .postprocessors import CombinePostfixFileSnippets, CombinePrefixFileSnippets
+
 
 class Project:
 
@@ -31,6 +33,11 @@ class Project:
         self.location = None
 
         self.interactive = interactive
+
+        self.postprocessors = [
+            CombinePostfixFileSnippets(),
+            CombinePrefixFileSnippets()
+        ]
 
         self.metadata_path = self.template_directory / 'metadata.json'
         self.metadata = json.load(open(self.metadata_path))
@@ -69,6 +76,7 @@ class Project:
             if template in self.applied_templates:
                 continue
             self.render_template(template, variables)
+            self._apply_postprocessing()
 
         self.template_variables.update(variables)
 
@@ -88,6 +96,17 @@ class Project:
         idx = self.remaining_templates.index(new_template_name)
         del self.remaining_templates[idx]
         self.applied_templates.append(new_template_name)
+
+    def _apply_postprocessing(self):
+
+        for dirpath, dirnames, filenames in os.walk(self.location):
+
+            if '.git' in dirnames:
+                dirnames.remove('.git')
+
+            if filenames:
+                for p in self.postprocessors:
+                    p.apply(dirpath)
 
     #     # create it ------------------------
 
