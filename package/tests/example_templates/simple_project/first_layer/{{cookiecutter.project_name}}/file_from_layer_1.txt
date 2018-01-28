@@ -1,1 +1,1 @@
-{{coookiecutter.file1_text}}
+{{cookiecutter.file1_text}}
