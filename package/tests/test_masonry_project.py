@@ -126,7 +126,6 @@ def test_can_determine_template_order_and_apply_them(project_templates_path, tmp
     assert project.remaining_templates == []
 
 
-@pytest.mark.xfail
 def test_can_perform_file_postfix_merging(project_templates_path, tmpdir):
 
     project = Project(project_templates_path)
@@ -140,11 +139,18 @@ def test_can_perform_file_postfix_merging(project_templates_path, tmpdir):
     project.add_template(name='third_layer', variables={})
 
     project_path = tmpdir.join(init_variables['project_name'])
-    created_file = project_path.join('file_from_layer_2.txt')
-
     assert project_path.check(dir=True)
+
+    created_file1 = project_path.join('file_from_layer_1.txt')
+    assert created_file1.check(file=True)
+    content = created_file1.read_text('utf8')
+    print(content)
+    assert 'Prefixed text' in content
+
+    created_file = project_path.join('file_from_layer_2.txt')
     assert created_file.check(file=True)
     content = created_file.read_text('utf8')
+    print(content)
     assert 'Postfixed text' in content
 
     assert project.applied_templates == ['first_layer', 'second_layer', 'third_layer']
