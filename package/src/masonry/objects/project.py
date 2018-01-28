@@ -10,6 +10,8 @@ from pathlib import Path
 import os
 import json
 
+from .template import Template
+
 from ..resolution import create_dependency_graph, resolve
 from ..prompt import prompt_cookiecutter_variables
 
@@ -26,6 +28,8 @@ class Project:
 
         self.template_variables = {}
 
+        self.location = None
+
         self.interactive = interactive
 
         self.metadata_path = self.template_directory / 'metadata.json'
@@ -36,9 +40,45 @@ class Project:
         else:
             self.masonry_config = masonry_config
 
-    # def initialise(self, output_dir, variables):
+    def initialise(self, output_dir, variables):
 
-    #     default_template = self.metadata['default']
+        default_template_name = self.metadata['default']
+        default_template_path = self.template_directory / default_template_name
+        default_template = Template(default_template_path, variables)
+
+        result = default_template.render(output_dir)
+
+        self.location = Path(result).parent
+        self.template_variables.update(variables)
+
+        self._update_templates_remaining(default_template_name)
+
+    def add_template(self, name, variables):
+
+        self._check_all_variables_are_new(variables)
+        variables.update(self.template_variables)
+
+        template_path = self.template_directory / name
+        template = Template(template_path, variables)
+
+        template.render(output_dir=self.location)
+
+        self._update_templates_remaining(name)
+
+    def _update_templates_remaining(self, new_template_name):
+
+        idx = self.remaining_templates.index(new_template_name)
+        del self.remaining_templates[idx]
+        self.applied_templates.append(new_template_name)
+
+    def _check_all_variables_are_new(self, variables):
+
+        current_variables = self.template_variables.keys()
+        unique_keys = (
+            key not in current_variables for key in variables.keys()
+        )
+        no_key_overlap = all(unique_keys)
+        assert no_key_overlap
 
     #     # create it ------------------------
 
