@@ -89,15 +89,6 @@ class Project:
         del self.remaining_templates[idx]
         self.applied_templates.append(new_template_name)
 
-    def _check_all_variables_are_new(self, variables):
-
-        current_variables = self.template_variables.keys()
-        unique_keys = (
-            key not in current_variables for key in variables.keys()
-        )
-        no_key_overlap = all(unique_keys)
-        # assert no_key_overlap
-
     #     # create it ------------------------
 
     #     # Work out all template names
