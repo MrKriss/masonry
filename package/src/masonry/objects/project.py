@@ -15,7 +15,7 @@ from .template import Template
 from .resolution import DependencyGraph
 from ..prompt import prompt_cookiecutter_variables
 
-from .postprocessors import CombinePostfixFileSnippets, CombinePrefixFileSnippets
+from .postprocessors import CombineFilePrefix, CombineFilePostfix
 
 
 class Project:
@@ -35,8 +35,8 @@ class Project:
         self.interactive = interactive
 
         self.postprocessors = [
-            CombinePostfixFileSnippets(),
-            CombinePrefixFileSnippets()
+            CombineFilePrefix(),
+            CombineFilePostfix()
         ]
 
         self.metadata_path = self.template_directory / 'metadata.json'
