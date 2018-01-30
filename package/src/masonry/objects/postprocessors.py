@@ -211,224 +211,81 @@ class CombineCodePrefix(CodePreprocessor):
         return insert_idx
 
 
-# def insert_code(src, dest, kind):
-#     """Insert code in source into destination file."""
-
-
-#     if not destination_tree.body:
-#         idx = 0
-#     elif kind == "prefix":
-#         idx = find_prefix_insertion_idx(destination_tree)
-#     elif kind == "postfix":
-#         idx = find_postfix_insertion_idx(destination_tree)
-
-#     if idx >= len(destination_tree.body):
-
-#         # Strip blank line before insertion
-#         if destination_lines[-1].strip() == '':
-#             del destination_lines[-1]
-
-#         # Append to file
-#         destination_lines.append('\n\n' + source_text + '\n')
-
-#     else:
-
-#         # Start with index at first line above object definition
-#         line_no = destination_tree.body[idx].lineno - 1  # line numbers count from 1
-#         line_no = get_previous_blank_line_no(destination_lines, line_no)
-
-#         # Strip blank lines before insertion
-#         if destination_lines[line_no - 1].strip() == '':
-#             del destination_lines[line_no - 1]
-#             line_no -= 1
-
-#         # perform the insertion
-#         destination_lines.insert(line_no, '\n\n' + source_text + '\n')
-
-#     all_text = '\n'.join(destination_lines)
-
-#     return all_text
-
-
 class CombineCodePostfix(CodePreprocessor):
 
-    def __init__(self, pattern='_postfix', only='.py'):
+    def __init__(self, pattern='_postfix'):
         super().__init__(pattern=pattern)
 
-    def process():
-        pass
+    def process(self, src, dest):
 
+        source_text = open(src).read().strip()
+        destination_text = open(dest).read()
+        destination_lines = destination_text.split('\n')
+        destination_tree = ast.parse(destination_text)
 
-# def combine_file_snippets(project_dir, stream=STDOUT):
-#     """ Recusively search for files ending in posfix/prefix and join them to their originals """
+        if not destination_tree.body:
+            idx = 0
+        else:
+            idx = self._find_postfix_insertion_idx(destination_tree)
 
-#     for dirpath, dirnames, filenames in os.walk(project_dir):
+        if idx >= len(destination_tree.body):
 
-#         if '.git' in dirnames:
-#             dirnames.remove('.git')
+            # Strip blank line before insertion
+            if destination_lines[-1].strip() == '':
+                del destination_lines[-1]
 
-#         postfix_files = fnmatch.filter(filenames, '*_postfix*')
-#         prefix_files = fnmatch.filter(filenames, '*_prefix*')
+            # Append to file
+            destination_lines.append('\n\n' + source_text + '\n')
 
-#         if postfix_files or prefix_files:
-#             puts(f"Applying postprocessing in {dirpath} ...", stream=stream)
+        else:
 
-#         with indent(4):
-#             for postfile in postfix_files:
-#                 original = os.path.join(dirpath, postfile.replace('_postfix', ''))
+            # Start with index at first line above object definition
+            line_no = destination_tree.body[idx].lineno - 1  # line numbers count from 1
+            line_no = self._get_previous_blank_line_no(destination_lines, line_no)
 
-#                 if os.path.exists(original):
-#                     postfile = os.path.join(dirpath, postfile)
+            # Strip blank lines before insertion
+            if destination_lines[line_no - 1].strip() == '':
+                del destination_lines[line_no - 1]
+                line_no -= 1
 
-#                     if postfile.endswith('.py') and original.endswith('.py'):
-#                         all_text = insert_code(postfile, original, kind='postfix')
-#                         with open(original, 'w') as f:
-#                             f.write(all_text)
-#                         os.remove(postfile)
-#                         puts(
-#                             f'Postfixing python code to {os.path.basename(original)}',
-#                             stream=stream)
-#                     else:
-#                         postfix_text(postfile, original)
-#                         puts(f'Postfixing text to {os.path.basename(original)}', stream=stream)
-#                 else:
-#                     raise ValueError(f'Original file not found for specified postfix: {postfile}')
+            # perform the insertion
+            destination_lines.insert(line_no, '\n\n' + source_text + '\n')
 
-#         with indent(4):
-#             for prefile in prefix_files:
-#                 original = os.path.join(dirpath, prefile.replace('_prefix', ''))
+        all_text = '\n'.join(destination_lines)
 
-#                 if os.path.exists(original):
-#                     prefile = os.path.join(dirpath, prefile)
+        # Write to file
+        with open(dest, 'w') as fout:
+            fout.write(all_text)
 
-#                     if prefile.endswith('.py') and original.endswith('.py'):
-#                         all_text = insert_code(prefile, original, kind='prefix')
-#                         with open(original, 'w') as f:
-#                             f.write(all_text)
-#                         os.remove(prefile)
-#                         puts(
-#                             f'Prefixing python code to {os.path.basename(original)}', stream=stream)
-#                     else:
-#                         prefix_text(prefile, original)
-#                         puts(f'Prefixing text to {os.path.basename(original)}', stream=stream)
-#                 else:
-#                     raise ValueError(f'Original file not found for specified prefix: {prefile}')
+        os.remove(src)
 
+        return fout.name
 
-# def insert_code(src, dest, kind):
-#     """Insert code in source into destination file."""
+    def _find_postfix_insertion_idx(self, module_ast):
+        """Return postfix insertion point.
 
-#     source_text = open(src).read().strip()
-#     destination_text = open(dest).read()
-#     destination_lines = destination_text.split('\n')
+        This is the point in the code after any functions or classes are defined, but before the ifname
+        statement if present.
+        """
 
-#     destination_tree = ast.parse(destination_text)
+        # Inspect ast types present
+        node_types = [type(x) for x in module_ast.body]
+        func_class_pos = [x == ast.FunctionDef or x == ast.ClassDef for x in node_types]
 
-#     if not destination_tree.body:
-#         idx = 0
-#     elif kind == "prefix":
-#         idx = find_prefix_insertion_idx(destination_tree)
-#     elif kind == "postfix":
-#         idx = find_postfix_insertion_idx(destination_tree)
+        last_node = module_ast.body[-1]
+        ifname_present = isinstance(last_node, ast.If) and last_node.test.left.id == '__name__'
 
-#     if idx >= len(destination_tree.body):
+        if any(func_class_pos):
+            # Insertion point is just after the last occurance of function or class
+            insert_idx = rindex(func_class_pos, True)
+            insert_idx += 1
 
-#         # Strip blank line before insertion
-#         if destination_lines[-1].strip() == '':
-#             del destination_lines[-1]
+        elif ifname_present:
+            # Insertion point is before ifname
+            insert_idx = -1
 
-#         # Append to file
-#         destination_lines.append('\n\n' + source_text + '\n')
+        else:
+            # Insert at end of code
+            insert_idx = len(module_ast.body)
 
-#     else:
-
-#         # Start with index at first line above object definition
-#         line_no = destination_tree.body[idx].lineno - 1  # line numbers count from 1
-#         line_no = get_previous_blank_line_no(destination_lines, line_no)
-
-#         # Strip blank lines before insertion
-#         if destination_lines[line_no - 1].strip() == '':
-#             del destination_lines[line_no - 1]
-#             line_no -= 1
-
-#         # perform the insertion
-#         destination_lines.insert(line_no, '\n\n' + source_text + '\n')
-
-#     all_text = '\n'.join(destination_lines)
-
-#     return all_text
-
-
-# def find_prefix_insertion_idx(module_ast):
-#     """Return prefix insertion point.
-
-#     This is the point in the code after any imports and constants, but before any functions or
-#     classes are defined.
-#     """
-
-#     # Inspect ast types present
-#     node_types = [type(x) for x in module_ast.body]
-#     func_class_pos = [x == ast.FunctionDef or x == ast.ClassDef for x in node_types]
-#     import_pos = [x == ast.Import or x == ast.ImportFrom for x in node_types]
-
-#     docstring_present = (isinstance(node_types[0], ast.Expr)
-#                          and isinstance(node_types[0].value, ast.Str))
-#     constants_pos = [isinstance(elem, ast.Assign) and elem.targets[0].id.isupper()
-#                      for elem in module_ast.body]
-
-#     last_node = module_ast.body[-1]
-#     ifname_present = isinstance(last_node, ast.If) and last_node.test.left.id == '__name__'
-
-#     if any(func_class_pos):
-#         # Insertion point is just before the first occurance of function or class
-#         insert_idx = func_class_pos.index(True)
-
-#     elif any(constants_pos):
-#         # Insertion point is after the last constant
-#         insert_idx = rindex(constants_pos, True)
-#         insert_idx += 1
-
-#     elif any(import_pos):
-#         # Insertion point is after all imports
-#         insert_idx = rindex(import_pos, True)
-#         insert_idx += 1
-
-#     elif docstring_present:
-#         # Insertion point is after docstring
-#         insert_idx = 1
-
-#     elif ifname_present:
-#         # Insertion point is before ifname
-#         insert_idx = -1
-
-#     return insert_idx
-
-
-# def find_postfix_insertion_idx(module_ast):
-#     """Return postfix insertion point.
-
-#     This is the point in the code after any functions or classes are defined, but before the ifname
-#     statement if present.
-#     """
-
-#     # Inspect ast types present
-#     node_types = [type(x) for x in module_ast.body]
-#     func_class_pos = [x == ast.FunctionDef or x == ast.ClassDef for x in node_types]
-
-#     last_node = module_ast.body[-1]
-#     ifname_present = isinstance(last_node, ast.If) and last_node.test.left.id == '__name__'
-
-#     if any(func_class_pos):
-#         # Insertion point is just after the last occurance of function or class
-#         insert_idx = rindex(func_class_pos, True)
-#         insert_idx += 1
-
-#     elif ifname_present:
-#         # Insertion point is before ifname
-#         insert_idx = -1
-
-#     else:
-#         # Insert at end of code
-#         insert_idx = len(module_ast.body)
-
-#     return insert_idx
+        return insert_idx
