@@ -53,47 +53,11 @@ class Preprocessor:
 
 class FilePreprocessor(Preprocessor):
 
+    """ Base Preprocessors for all non code files. """
+
     def __init__(self, pattern):
         super().__init__(pattern=pattern)
         self.exclude = '.py'
-
-
-class CodePreprocessor(Preprocessor):
-
-    def __init__(self, pattern):
-        super().__init__(pattern=pattern)
-        self.only = '.py'
-
-    def _get_previous_blank_line_no(self, lines, idx):
-        """Find a blank line before the object definition"""
-
-        while True:
-            if not lines[idx].strip():
-                # found a blank line
-                break
-            else:
-                idx -= 1
-
-        return idx
-
-
-class CombineFilePostfix(FilePreprocessor):
-
-    def __init__(self, pattern='_postfix'):
-        super().__init__(pattern=pattern)
-
-    def process(self, src, dest):
-        """ Add the content of src to the end of dest file and remove src file. 
-
-        Return the updated filename 
-        """
-
-        with open(dest, 'a') as fout:
-            with open(src) as fin:
-                fout.write(fin.read())
-        os.remove(fin.name)
-
-        return fout.name
 
 
 class CombineFilePrefix(FilePreprocessor):
@@ -116,10 +80,32 @@ class CombineFilePrefix(FilePreprocessor):
         return fin.name
 
 
-class CombineCodePrefix(CodePreprocessor):
+class CombineFilePostfix(FilePreprocessor):
 
-    def __init__(self, pattern='_prefix'):
+    def __init__(self, pattern='_postfix'):
         super().__init__(pattern=pattern)
+
+    def process(self, src, dest):
+        """ Add the content of src to the end of dest file and remove src file. 
+
+        Return the updated filename 
+        """
+
+        with open(dest, 'a') as fout:
+            with open(src) as fin:
+                fout.write(fin.read())
+        os.remove(fin.name)
+
+        return fout.name
+
+
+class CodePreprocessor(Preprocessor):
+
+    """Base Preprocessor for all Python Code files """
+
+    def __init__(self, pattern):
+        super().__init__(pattern=pattern)
+        self.only = '.py'
 
     def process(self, src, dest):
 
@@ -131,7 +117,7 @@ class CombineCodePrefix(CodePreprocessor):
         if not destination_tree.body:
             idx = 0
         else:
-            idx = self._find_prefix_insertion_idx(destination_tree)
+            idx = self._find_insertion_idx(destination_tree)
 
         if idx >= len(destination_tree.body):
 
@@ -166,7 +152,28 @@ class CombineCodePrefix(CodePreprocessor):
 
         return fout.name
 
-    def _find_prefix_insertion_idx(self, module_ast):
+    def _get_previous_blank_line_no(self, lines, idx):
+        """Find a blank line before the object definition"""
+
+        while True:
+            if not lines[idx].strip():
+                # found a blank line
+                break
+            else:
+                idx -= 1
+
+        return idx
+
+    def _find_insertion_idx(self):
+        raise NotImplementedError
+
+
+class CombineCodePrefix(CodePreprocessor):
+
+    def __init__(self, pattern='_prefix'):
+        super().__init__(pattern=pattern)
+
+    def _find_insertion_idx(self, module_ast):
         """Return prefix insertion point.
 
         This is the point in the code after any imports and constants, but before any functions or
@@ -216,52 +223,7 @@ class CombineCodePostfix(CodePreprocessor):
     def __init__(self, pattern='_postfix'):
         super().__init__(pattern=pattern)
 
-    def process(self, src, dest):
-
-        source_text = open(src).read().strip()
-        destination_text = open(dest).read()
-        destination_lines = destination_text.split('\n')
-        destination_tree = ast.parse(destination_text)
-
-        if not destination_tree.body:
-            idx = 0
-        else:
-            idx = self._find_postfix_insertion_idx(destination_tree)
-
-        if idx >= len(destination_tree.body):
-
-            # Strip blank line before insertion
-            if destination_lines[-1].strip() == '':
-                del destination_lines[-1]
-
-            # Append to file
-            destination_lines.append('\n\n' + source_text + '\n')
-
-        else:
-
-            # Start with index at first line above object definition
-            line_no = destination_tree.body[idx].lineno - 1  # line numbers count from 1
-            line_no = self._get_previous_blank_line_no(destination_lines, line_no)
-
-            # Strip blank lines before insertion
-            if destination_lines[line_no - 1].strip() == '':
-                del destination_lines[line_no - 1]
-                line_no -= 1
-
-            # perform the insertion
-            destination_lines.insert(line_no, '\n\n' + source_text + '\n')
-
-        all_text = '\n'.join(destination_lines)
-
-        # Write to file
-        with open(dest, 'w') as fout:
-            fout.write(all_text)
-
-        os.remove(src)
-
-        return fout.name
-
-    def _find_postfix_insertion_idx(self, module_ast):
+    def _find_insertion_idx(self, module_ast):
         """Return postfix insertion point.
 
         This is the point in the code after any functions or classes are defined, but before the ifname
