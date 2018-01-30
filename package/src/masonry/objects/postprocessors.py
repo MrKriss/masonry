@@ -32,7 +32,6 @@ class Preprocessor:
             original = f.parent / original_fname
 
             if os.path.exists(original):
-                print(original)
                 changed_filename = self.process(str(f), str(original))
                 updated_files.append(changed_filename)
 
@@ -162,6 +161,8 @@ class CombineCodePrefix(CodePreprocessor):
         # Write to file
         with open(dest, 'w') as fout:
             fout.write(all_text)
+
+        os.remove(src)
 
         return fout.name
 

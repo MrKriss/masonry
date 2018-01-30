@@ -94,30 +94,31 @@ def test_code_insertion(tmpdir, n):
     for fp in [starting_filepath, new_content_filepath]:
         shutil.copy(str(fp), str(dest_path))
 
+    starting_filepath_copy = dest_path / starting_filepath.name
+    new_content_filepath_copy = dest_path / new_content_filepath.name
+
     # Rename so file pattern will match
-    src = dest_path / new_content_filepath.name
-    dest = src.with_name(starting_filepath.stem + '_prefix.py')
-    shutil.move(str(src), str(dest))
+    dest = starting_filepath_copy.with_name(starting_filepath.stem + '_prefix.py')
+    shutil.move(str(new_content_filepath_copy), str(dest))
 
     # WHEN code is inserted
     postprocessor = CombineCodePrefix(pattern='_prefix')
     changed_files = postprocessor.apply(dest_path)
 
-    assert changed_files
+    # THEN the following files should be changed
+    assert changed_files == [str(starting_filepath_copy)]
 
     # THEN result should have the code in the right place, with pre and post being before or after
     # the main body of the code, which is the part after inports and constants, but before the
     # if __name__ == __main__ clause, if present
-    # target = target_path.read_text()
-    # assert target == result
+    target_path = TEST_DIR / Path(f'data/postprocessing_examples/output/result{n}_pre.py')
+    target = target_path.read_text()
+    result = open(changed_files[0]).read()
+    assert target == result
 
-    # # THEN config_prefix.ini should be prefixed to config.ini
-    # target_path = TEST_DIR / Path('data/postprocessing_examples/output/result_config_prefix.ini')
-    # target = target_path.read_text()
-    # result_path = dest_path / 'config.ini'
-    # result = result_path.read_text()
-    # assert target == result
+    # THEN *_prefix and *_postfix files hould be removed as part of the processing
+    prefix_files_present = dest_path.glob("*_prefix*")
+    assert not list(prefix_files_present)
 
-    # # THEN *_prefix and *_postfix files hould be removed as part of the processing
-    # config_file_present = (result_path / 'config_prefix.py').exists()
-    # assert not config_file_present
+    # CLEANUP
+    shutil.rmtree(str(dest_path))
