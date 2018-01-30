@@ -96,7 +96,7 @@ def test_can_add_template_layer_after_default_template(project_templates_path, t
     assert 'second_layer' not in project.remaining_templates
 
 
-def test_can_determine_template_order_and_apply_them(project_templates_path, tmpdir):
+def test_can_resolve_template_order_and_apply_them(project_templates_path, tmpdir):
 
     project = Project(project_templates_path)
 
@@ -126,7 +126,7 @@ def test_can_determine_template_order_and_apply_them(project_templates_path, tmp
     assert project.remaining_templates == []
 
 
-def test_can_perform_file_postfix_merging(project_templates_path, tmpdir):
+def test_can_perform_file_post_and_prefix_merging(project_templates_path, tmpdir):
 
     project = Project(project_templates_path)
 
