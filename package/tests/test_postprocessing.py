@@ -9,7 +9,8 @@ from conftest import TEST_DIR
 from masonry.objects.postprocessors import (
     CombineFilePrefix,
     CombineFilePostfix,
-    CombineCodePrefix
+    CombineCodePrefix,
+    CombineCodePostfix
 )
 
 
@@ -79,14 +80,15 @@ def test_combine_file_snippets_postprocessor_prefix(tmpdir):
 
 
 ns = range(1, 6)
+fix = ('prefix', 'postfix')
 
 
-@pytest.mark.parametrize('n', ns)
-def test_code_insertion(tmpdir, n):
+@pytest.mark.parametrize('n,fix', itertools.product(ns, fix))
+def test_code_insertion(tmpdir, n, fix):
 
     # GIVEN original python code file and some new code to insert into it
     starting_filepath = TEST_DIR / Path(f'data/postprocessing_examples/input/test_code{n}.py')
-    new_content_filepath = TEST_DIR / Path(f'data/postprocessing_examples/input/new_code_prefix.py')
+    new_content_filepath = TEST_DIR / Path(f'data/postprocessing_examples/input/new_code_{fix}.py')
 
     # Use a temporary directory for the processing
     dest_path = Path(tmpdir.strpath) / 'postprocessing'
@@ -98,11 +100,14 @@ def test_code_insertion(tmpdir, n):
     new_content_filepath_copy = dest_path / new_content_filepath.name
 
     # Rename so file pattern will match
-    dest = starting_filepath_copy.with_name(starting_filepath.stem + '_prefix.py')
+    dest = starting_filepath_copy.with_name(starting_filepath.stem + f'_{fix}.py')
     shutil.move(str(new_content_filepath_copy), str(dest))
 
     # WHEN code is inserted
-    postprocessor = CombineCodePrefix(pattern='_prefix')
+    if fix == 'prefix':
+        postprocessor = CombineCodePrefix()
+    elif fix == 'postfix':
+        postprocessor = CombineCodePostfix()
     changed_files = postprocessor.apply(dest_path)
 
     # THEN the following files should be changed
@@ -111,13 +116,13 @@ def test_code_insertion(tmpdir, n):
     # THEN result should have the code in the right place, with pre and post being before or after
     # the main body of the code, which is the part after inports and constants, but before the
     # if __name__ == __main__ clause, if present
-    target_path = TEST_DIR / Path(f'data/postprocessing_examples/output/result{n}_pre.py')
+    target_path = TEST_DIR / Path(f'data/postprocessing_examples/output/result{n}_{fix}.py')
     target = target_path.read_text()
     result = open(changed_files[0]).read()
     assert target == result
 
     # THEN *_prefix and *_postfix files hould be removed as part of the processing
-    prefix_files_present = dest_path.glob("*_prefix*")
+    prefix_files_present = dest_path.glob(f'*_{fix}*')
     assert not list(prefix_files_present)
 
     # CLEANUP
