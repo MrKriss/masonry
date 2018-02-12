@@ -6,54 +6,69 @@ import json
 import os
 
 from conftest import TEST_DIR
-
-from masonry import main
+from masonry.objects.project import Project
 
 from cookiecutter.exceptions import FailedHookException, UndefinedVariableInTemplate
+
+
+# @pytest.fixture(scope='module')
+# def init_simple_project(tmpdir_factory):
+
+#     # Setup a basic project
+#     temp_output_path = Path(tmpdir_factory.mktemp('simple_project').strpath)
+#     template_path = TEST_DIR / 'example_templates' / 'breaking_project'
+
+#     # Set arguments
+#     args = f"init -o {temp_output_path} {template_path}"
+
+#     from masonry import main
+#     # Run from entry point
+#     main.main(args=args)
+
+#     cookiecutter_vars_path = os.path.join(template_path, "first_layer", "cookiecutter.json")
+#     with open(cookiecutter_vars_path, 'r') as f:
+#         cookiecutter_vars = json.load(f)
+
+#     project_name = cookiecutter_vars['project_name']
+#     project_dir = temp_output_path / project_name
+
+#     return project_dir
 
 
 @pytest.fixture(scope='module')
 def init_simple_project(tmpdir_factory):
 
-    # Setup a basic project
     temp_output_path = Path(tmpdir_factory.mktemp('simple_project').strpath)
     template_path = TEST_DIR / 'example_templates' / 'breaking_project'
 
     # Set arguments
-    args = f"init -o {temp_output_path} {template_path}"
+    init_variables = {
+        "project_name": "new-project",
+        "file1_text": "Hello World!"
+    }
 
-    from masonry import main
-    # Run from entry point
-    main.main(args=args)
+    project = Project(template_path)
+    project.initialise(output_dir=temp_output_path, variables=init_variables)
 
-    cookiecutter_vars_path = os.path.join(template_path, "first_layer", "cookiecutter.json")
-    with open(cookiecutter_vars_path, 'r') as f:
-        cookiecutter_vars = json.load(f)
-
-    project_name = cookiecutter_vars['project_name']
-    project_dir = temp_output_path / project_name
-
-    return project_dir
+    return project
 
 
-@pytest.mark.xfail
 def test_rollback_when_error_in_pre_hook(init_simple_project):
 
     # GIVEN an initialised project
-    project_dir = init_simple_project
+    project = init_simple_project
 
-    # WHEN a template is added that causes an error
-    args = f"add -o {project_dir} breaking_pre_hook"
+    # WHEN adding a template that has a failing prehook
     with pytest.raises(FailedHookException):
-        main.main(args=args)
+        project.add_template(name='breaking_pre_hook', variables={})
 
     # THEN only the original files should be present
     target = set([
-        project_dir / 'file_from_layer_1.txt',
-        project_dir / '.mason',
-        project_dir / '.git',
+        project.location / 'file_from_layer_1.txt',
+        project.location / '.mason',
+        project.location / '.git',
     ])
-    result = set(project_dir.iterdir())
+    result = set(project.location.iterdir())
     assert result == target
 
     # THEN original file should be unchanged
