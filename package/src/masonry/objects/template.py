@@ -1,8 +1,13 @@
 
 import os
 
+from pathlib import Path
+
 import py
 from cookiecutter.main import cookiecutter
+from cookiecutter.exceptions import FailedHookException, UndefinedVariableInTemplate
+
+import shutil
 
 
 class Template:
@@ -41,12 +46,48 @@ class Template:
         # password:
         #     The password to use when extracting the repository.
 
-        result = cookiecutter(
-            template=self.path,
-            output_dir=output_dir,
-            extra_context=self.variables,
-            no_input=True,
-            overwrite_if_exists=True,
+        # Make Backup
+        archive_file = os.path.join(output_dir, 'archive')
+        archive_path = shutil.make_archive(
+            base_name=archive_file,
+            format='tar',
+            root_dir=output_dir,
+            base_dir='.'
         )
 
+        result = None
+
+        try:
+            result = cookiecutter(
+                template=self.path,
+                output_dir=output_dir,
+                extra_context=self.variables,
+                no_input=True,
+                overwrite_if_exists=True,
+            )
+        except (FailedHookException, UndefinedVariableInTemplate) as e:
+            # Rollback to archived content
+            print("An error occured during templating, Rolling back to last stable state.")
+            clear_content(output_dir)
+            shutil.unpack_archive(archive_path, output_dir)
+            raise e
+        finally:
+            # Remove Backup
+            os.remove(archive_path)
+
         return result
+
+
+def clear_content(dir_path):
+    """Remove all the content form a directory, leaving the archive backup file."""
+
+    for dirpath, subdirs, filenames in os.walk(dir_path, topdown=False):
+
+        for file in filenames:
+            file_path = Path(dirpath) / file
+            if file_path.name != 'archive.tar':
+                file_path.unlink()
+
+        for subdir in subdirs:
+            subdir_path = Path(dirpath) / subdir
+            subdir_path.rmdir()
