@@ -1,11 +1,16 @@
 
+Features to Reimpliment:
+    ☐ Creating a git repo as part of project initialisation
+    ☐ Saving project metadata in .mason file
+
+
 Bugs:
     ✔ Need to remove /_postfix file once used @done (9/9/2017, 8:52:55 PM)
     ✔ If the add command errors, the final directory structure is wiped. @done (9/12/2017, 11:06:58 PM)
     ✔ Reports files are moved when they are not in package template @done (9/6/2017, 12:14:47 AM)
     ✔ templates applied is not filtered for previous templates in .mason field @done (9/12/2017, 11:07:01 PM)
+    ✔ If there is an error in template basic creation the parent dir is replaced. not good @done (2/12/2018, 9:14:24 PM)
 
-    ☐ If there is an error in template basic creation the parent dir is replaced. not good 
     ☐ Docker template needs a post hook to strip hash from core lib names so can install cross platform
 
 Documentation:
