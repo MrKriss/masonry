@@ -2,7 +2,12 @@
 Features to Reimpliment:
     ☐ Creating a git repo as part of project initialisation
     ☐ Saving project metadata in .mason file
-
+    ☐ Commandline API
+    ☐ Python package API
+    ☐ Input prompting
+    ☐ Input validation
+    ☐ Checking all the templates render ok
+    ☐ Add useful feedback messages/prompt progress visuals during execution on CLI
 
 Bugs:
     ✔ Need to remove /_postfix file once used @done (9/9/2017, 8:52:55 PM)
