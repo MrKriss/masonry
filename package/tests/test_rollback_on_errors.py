@@ -42,19 +42,17 @@ def test_rollback_when_error_in_pre_hook(init_simple_project, layer):
         project.add_template(name=layer, variables={})
 
     # THEN only the original files should be present
-    project_name = project.template_variables['project_name']
-    root_dir = project.location / project_name
     target = set([
-        root_dir / 'file_from_layer_1.txt',
-        # root_dir / '.mason',
-        # root_dir / '.git',
+        project.location / 'file_from_layer_1.txt',
+        project.location / '.mason',
+        # project.location / '.git',
     ])
-    result = set(root_dir.iterdir())
+    result = set(project.location.iterdir())
     assert result == target
 
     # THEN original file should be unchanged
     target = '123456'
-    result_file = root_dir / 'file_from_layer_1.txt'
+    result_file = project.location / 'file_from_layer_1.txt'
     result = result_file.read_text()
     assert result == target
 
@@ -69,19 +67,17 @@ def test_rollback_when_error_in_variable_name(init_simple_project):
         project.add_template(name='breaking_variable_name', variables={})
 
     # THEN only the original files should be present
-    project_name = project.template_variables['project_name']
-    root_dir = project.location / project_name
     target = set([
-        root_dir / 'file_from_layer_1.txt',
-        # root_dir / '.mason',
-        # root_dir / '.git',
+        project.location / 'file_from_layer_1.txt',
+        project.location / '.mason',
+        # project.location / '.git',
     ])
-    result = set(root_dir.iterdir())
+    result = set(project.location.iterdir())
     assert result == target
 
     # THEN original file should be unchanged
     target = '123456'
-    result_file = root_dir / 'file_from_layer_1.txt'
+    result_file = project.location / 'file_from_layer_1.txt'
     result = result_file.read_text()
     assert result == target
 
