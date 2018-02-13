@@ -45,7 +45,7 @@ def test_can_create_project_with_required_attributes(project_templates_path, tmp
 
 def test_can_create_project_with_default_template(project_templates_path, tmpdir):
 
-    project = Project(project_templates_path)
+    project = Project(template_dir=project_templates_path)
 
     variables = {
         "project_name": "new-project",
@@ -68,7 +68,7 @@ def test_can_create_project_with_default_template(project_templates_path, tmpdir
 
 def test_can_add_template_layer_after_default_template(project_templates_path, tmpdir):
 
-    project = Project(project_templates_path)
+    project = Project(template_dir=project_templates_path)
 
     init_variables = {
         "project_name": "new-project",
@@ -98,7 +98,7 @@ def test_can_add_template_layer_after_default_template(project_templates_path, t
 
 def test_can_resolve_template_order_and_apply_them(project_templates_path, tmpdir):
 
-    project = Project(project_templates_path)
+    project = Project(template_dir=project_templates_path)
 
     init_variables = {
         "project_name": "new-project",
@@ -128,7 +128,7 @@ def test_can_resolve_template_order_and_apply_them(project_templates_path, tmpdi
 
 def test_can_perform_file_post_and_prefix_merging(project_templates_path, tmpdir):
 
-    project = Project(project_templates_path)
+    project = Project(template_dir=project_templates_path)
 
     init_variables = {
         "project_name": "new-project",
@@ -155,3 +155,22 @@ def test_can_perform_file_post_and_prefix_merging(project_templates_path, tmpdir
 
     assert project.applied_templates == ['first_layer', 'second_layer', 'third_layer']
     assert project.remaining_templates == []
+
+
+def test_can_recreate_project_from_mason_file(project_templates_path, tmpdir):
+
+    project1 = Project(template_dir=project_templates_path)
+
+    init_variables = {
+        "project_name": "new-project",
+        "file1_text": "Hello World!"
+    }
+
+    project1.initialise(output_dir=tmpdir.strpath, variables=init_variables)
+
+    mason_file_path = Path(tmpdir) / init_variables['project_name'] / '.mason'
+    project2 = Project(mason_file=mason_file_path)
+
+    attributes = [k for k in project1.__dict__.keys() if not k.startswith('_')]
+    for attr in attributes:
+        assert project1.__dict__[attr] == project2.__dict__[attr]
