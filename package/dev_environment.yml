@@ -21,3 +21,5 @@ dependencies:
     - inquirer
     - ruamel.yaml
     - schema
+    - pytest-watch
+    - autopep8
