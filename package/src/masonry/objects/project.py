@@ -20,21 +20,31 @@ from .postprocessors import CombineFilePrefix, CombineFilePostfix
 
 class Project:
 
-    def __init__(self, filepath, masonry_config=None, interactive=False):
+    def __init__(self, template_dir=None, mason_file=None, masonry_config=None, interactive=False):
 
-        self.template_directory = Path(filepath).resolve()
-        self.remaining_templates = [
-            p.name for p in self.template_directory.iterdir() if p.is_dir()
-        ]
-        self.applied_templates = []
+        if template_dir:
+            self.template_directory = Path(template_dir).resolve()
+            self.remaining_templates = [
+                p.name for p in self.template_directory.iterdir() if p.is_dir()
+            ]
+            self.applied_templates = []
+            self.template_variables = {}
+            self.location = None
+            self.parent_dir = None
 
-        self.template_variables = {}
-
-        self.location = None
+        elif mason_file:
+            mason_file = Path(mason_file)
+            mason_data = json.load(open(mason_file))
+            self.template_directory = Path(mason_data['template_directory'])
+            self.remaining_templates = mason_data['remaining_templates']
+            self.applied_templates = mason_data['applied_templates']
+            self.template_variables = mason_data['template_variables']
+            self.location = Path(mason_data['project_location'])
+            self.parent_dir = self.location.parent
 
         self.interactive = interactive
 
-        self.postprocessors = [
+        self._postprocessors = [
             CombineFilePrefix(),
             CombineFilePostfix()
         ]
@@ -43,7 +53,7 @@ class Project:
         self.metadata = json.load(open(self.metadata_path))
 
         # Create graph of template dependencies
-        self.g = DependencyGraph(
+        self._g = DependencyGraph(
             self.metadata,
             template_list=self.remaining_templates
         )
@@ -61,15 +71,18 @@ class Project:
 
         result = default_template.render(output_dir)
 
-        self.location = Path(result).parent
-        self.template_variables.update(variables)
+        self.location = Path(result)
+        self.parent_dir = Path(result).parent
 
+        self.template_variables.update(variables)
         self._update_templates_remaining(default_template_name)
+
+        self._save_state()
 
     def add_template(self, name, variables):
 
         # Find all template dependencies
-        templates_to_apply = self.g.get_dependencies(name)
+        templates_to_apply = self._g.get_dependencies(name)
 
         # Render each template in turn
         for template in templates_to_apply:
@@ -87,7 +100,7 @@ class Project:
 
         template = Template(template_path, variables)
 
-        template.render(output_dir=self.location)
+        template.render(output_dir=self.parent_dir)
 
         self._update_templates_remaining(name)
 
@@ -105,8 +118,21 @@ class Project:
                 dirnames.remove('.git')
 
             if filenames:
-                for p in self.postprocessors:
+                for p in self._postprocessors:
                     p.apply(dirpath)
+
+    def _save_state(self):
+
+        mason_data = dict(
+            applied_templates=self.applied_templates,
+            remaining_templates=self.remaining_templates,
+            template_directory=self.template_directory.as_posix(),
+            template_variables=self.template_variables,
+            project_location=self.location.as_posix()
+        )
+        mason_file_path = self.location / '.mason'
+        with mason_file_path.open('w', encoding='utf-8') as f:
+            json.dump(mason_data, f)
 
     #     # create it ------------------------
 
