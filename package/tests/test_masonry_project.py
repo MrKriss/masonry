@@ -157,7 +157,7 @@ def test_can_perform_file_post_and_prefix_merging(project_templates_path, tmpdir
     assert project.remaining_templates == []
 
 
-def test_can_recreate_project_from_mason_file(project_templates_path, tmpdir):
+def test_can_recreate_project_from_mason_file_after_being_initialised(project_templates_path, tmpdir):
 
     project1 = Project(template_dir=project_templates_path)
 
@@ -174,3 +174,45 @@ def test_can_recreate_project_from_mason_file(project_templates_path, tmpdir):
     attributes = [k for k in project1.__dict__.keys() if not k.startswith('_')]
     for attr in attributes:
         assert project1.__dict__[attr] == project2.__dict__[attr]
+
+
+def test_can_recreate_project_from_mason_file_after_first_layer(project_templates_path, tmpdir):
+
+    project1 = Project(template_dir=project_templates_path)
+    init_variables = {
+        "project_name": "new-project",
+        "file1_text": "Hello World!"
+    }
+    project1.initialise(output_dir=tmpdir.strpath, variables=init_variables)
+
+    second_layer_variables = {
+        "file2_text": "This text is a test",
+    }
+    project1.add_template(name='third_layer', variables=second_layer_variables)
+
+    mason_file_path = Path(tmpdir) / init_variables['project_name'] / '.mason'
+    project2 = Project(mason_file=mason_file_path)
+
+    attributes = [k for k in project1.__dict__.keys() if not k.startswith('_')]
+    for attr in attributes:
+        assert project1.__dict__[attr] == project2.__dict__[attr]
+
+
+@pytest.mark.xfail
+def test_can_commit_template_layers_to_git_repo(project_templates_path, tmpdir):
+
+    project = Project(template_dir=project_templates_path)
+
+    init_variables = {
+        "project_name": "new-project",
+        "file1_text": "Hello World!"
+    }
+    project.initialise(output_dir=tmpdir.strpath, variables=init_variables)
+
+    second_layer_variables = {
+        "file2_text": "This text is a test",
+    }
+    project.add_template(name='third_layer', variables=second_layer_variables)
+
+    git_folder = project.location / '.git'
+    assert git_folder.exists()
