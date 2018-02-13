@@ -4,6 +4,8 @@ from masonry.objects.project import Project
 from pathlib import Path
 import py.path
 
+import git
+
 
 @pytest.fixture
 def project_templates_path():
@@ -198,10 +200,9 @@ def test_can_recreate_project_from_mason_file_after_first_layer(project_template
         assert project1.__dict__[attr] == project2.__dict__[attr]
 
 
-@pytest.mark.xfail
 def test_can_commit_template_layers_to_git_repo(project_templates_path, tmpdir):
 
-    project = Project(template_dir=project_templates_path)
+    project = Project(template_dir=project_templates_path, use_git=True)
 
     init_variables = {
         "project_name": "new-project",
@@ -216,3 +217,11 @@ def test_can_commit_template_layers_to_git_repo(project_templates_path, tmpdir):
 
     git_folder = project.location / '.git'
     assert git_folder.exists()
+
+    # Check git repo was created and commits made
+    r = git.Repo(project.location.as_posix())
+    log = r.git.log(pretty='oneline').split('\n')
+    assert len(log) == 3
+    assert "Add 'first_layer' template layer via masonry." in log[2]
+    assert "Add 'second_layer' template layer via masonry." in log[1]
+    assert "Add 'third_layer' template layer via masonry." in log[0]
