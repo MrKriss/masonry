@@ -1,7 +1,7 @@
 
 Features to Reimpliment:
-    ☐ Creating a git repo as part of project initialisation
-    ☐ Saving project metadata in .mason file
+    ✔ Creating a git repo as part of project initialisation @done (2/13/2018, 10:12:21 PM)
+    ✔ Saving project metadata in .mason file @done (2/13/2018, 9:20:34 PM)
     ☐ Commandline API
     ☐ Python package API
     ☐ Input prompting
