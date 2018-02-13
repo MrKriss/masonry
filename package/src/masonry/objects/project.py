@@ -74,10 +74,7 @@ class Project:
         self.location = Path(result)
         self.parent_dir = Path(result).parent
 
-        self.template_variables.update(variables)
-        self._update_templates_remaining(default_template_name)
-
-        self._save_state()
+        self._update_and_save_state(default_template_name, variables)
 
     def add_template(self, name, variables):
 
@@ -90,8 +87,7 @@ class Project:
                 continue
             self.render_template(template, variables)
             self._apply_postprocessing()
-
-        self.template_variables.update(variables)
+            self._update_and_save_state(template, variables)
 
     def render_template(self, name, variables):
 
@@ -99,16 +95,7 @@ class Project:
         variables.update(self.template_variables)
 
         template = Template(template_path, variables)
-
         template.render(output_dir=self.parent_dir)
-
-        self._update_templates_remaining(name)
-
-    def _update_templates_remaining(self, new_template_name):
-
-        idx = self.remaining_templates.index(new_template_name)
-        del self.remaining_templates[idx]
-        self.applied_templates.append(new_template_name)
 
     def _apply_postprocessing(self):
 
@@ -121,7 +108,19 @@ class Project:
                 for p in self._postprocessors:
                     p.apply(dirpath)
 
-    def _save_state(self):
+    def _update_and_save_state(self, template_name, variables):
+        self.template_variables.update(variables)
+        self._update_templates_remaining(template_name)
+        self._save_state_to_mason_file()
+        self._commit_to_git()
+
+    def _update_templates_remaining(self, applied_template):
+
+        idx = self.remaining_templates.index(applied_template)
+        del self.remaining_templates[idx]
+        self.applied_templates.append(applied_template)
+
+    def _save_state_to_mason_file(self):
 
         mason_data = dict(
             applied_templates=self.applied_templates,
@@ -133,6 +132,30 @@ class Project:
         mason_file_path = self.location / '.mason'
         with mason_file_path.open('w', encoding='utf-8') as f:
             json.dump(mason_data, f)
+
+    def _commit_to_git(self):
+        # if not (Path(output_project_dir) / '.git').exists() and 'repo' not in vars():
+        #     # Initialise git repo
+        #     repo = git.Repo.init(output_project_dir)
+        # else:
+        #     repo = git.Repo(output_project_dir)
+
+        # # Save state
+        # project_state['variables'].update(content)
+        # if name not in project_state['templates']:
+        #     project_state['templates'].append(name)
+        # project_state['project'] = project_path.name
+
+        # # Save state of project variables
+        # mason_vars = Path(output_project_dir) / '.mason'
+        # with mason_vars.open('w') as f:
+        #     json.dump(project_state, f, indent=4)
+
+        # # Commit template layer to git repo
+        # all_files = [p.as_posix() for p in Path(output_project_dir).iterdir() if p.is_file]
+        # repo.index.add(all_files)
+        # repo.index.commit(f"Add '{name}' template layer via stone mason.")
+        pass
 
     #     # create it ------------------------
 
