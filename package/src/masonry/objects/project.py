@@ -1,14 +1,7 @@
-
-# import attr
-
-# @attr.s
-# class Project:
-
-#     filepath = attr.ib()
-
 from pathlib import Path
 import os
 import json
+import git
 
 from .template import Template
 
@@ -20,7 +13,7 @@ from .postprocessors import CombineFilePrefix, CombineFilePostfix
 
 class Project:
 
-    def __init__(self, template_dir=None, mason_file=None, masonry_config=None, interactive=False):
+    def __init__(self, template_dir=None, mason_file=None, masonry_config=None, interactive=False, use_git=False):
 
         if template_dir:
             self.template_directory = Path(template_dir).resolve()
@@ -43,6 +36,7 @@ class Project:
             self.parent_dir = self.location.parent
 
         self.interactive = interactive
+        self.use_git = use_git
 
         self._postprocessors = [
             CombineFilePrefix(),
@@ -112,7 +106,7 @@ class Project:
         self.template_variables.update(variables)
         self._update_templates_remaining(template_name)
         self._save_state_to_mason_file()
-        self._commit_to_git()
+        self._commit_to_git(template_name)
 
     def _update_templates_remaining(self, applied_template):
 
@@ -133,26 +127,20 @@ class Project:
         with mason_file_path.open('w', encoding='utf-8') as f:
             json.dump(mason_data, f)
 
-    def _commit_to_git(self):
-        # if not (Path(output_project_dir) / '.git').exists() and 'repo' not in vars():
-        #     # Initialise git repo
-        #     repo = git.Repo.init(output_project_dir)
-        # else:
-        #     repo = git.Repo(output_project_dir)
+    def _commit_to_git(self, template_name):
 
-        # # Save state
-        # project_state['variables'].update(content)
-        # if name not in project_state['templates']:
-        #     project_state['templates'].append(name)
-        # project_state['project'] = project_path.name
+        if not self.use_git:
+            return None
 
-        # # Save state of project variables
-        # mason_vars = Path(output_project_dir) / '.mason'
-        # with mason_vars.open('w') as f:
-        #     json.dump(project_state, f, indent=4)
+        git_dir = self.location / '.git'
 
-        # # Commit template layer to git repo
-        # all_files = [p.as_posix() for p in Path(output_project_dir).iterdir() if p.is_file]
-        # repo.index.add(all_files)
-        # repo.index.commit(f"Add '{name}' template layer via stone mason.")
-        pass
+        if not git_dir.exists():
+            # Initialise git repo
+            repo = git.Repo.init(self.location)
+        else:
+            repo = git.Repo(self.location)
+
+        # Commit template layer to git repo
+        all_files = [p.as_posix() for p in self.location.iterdir() if p.is_file]
+        repo.index.add(all_files)
+        repo.index.commit(f"Add '{template_name}' template layer via masonry.")
