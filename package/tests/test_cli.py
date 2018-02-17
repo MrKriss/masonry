@@ -1,0 +1,32 @@
+
+
+import pytest
+import py
+
+from pathlib import Path
+
+from masonry.objects.cli import CLI
+
+from schema import SchemaError
+
+
+@pytest.fixture
+def project_templates_path():
+    return (
+        py.path.local(__file__)
+        .dirpath()
+        .join('example_templates/simple_project')
+    )
+
+
+def test_cli_init_arguments(project_templates_path, tmpdir):
+
+    argument_string = f"init {project_templates_path.strpath} -o {tmpdir.strpath}"
+
+    app = CLI()
+    app.parse_args(argument_string)
+    args = app.validate_args()
+
+    assert 'init' in args
+    assert args['PROJECT'] == Path(project_templates_path.strpath)
+    assert args['--output'] == Path(tmpdir.strpath)
