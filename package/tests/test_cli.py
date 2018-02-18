@@ -23,9 +23,8 @@ def test_cli_init_arguments(project_templates_path, tmpdir):
 
     argument_string = f"init {project_templates_path.strpath} -o {tmpdir.strpath}"
 
-    app = CLI()
-    app.parse_args(argument_string)
-    args = app.validate_args()
+    app = CLI(argument_string)
+    args = app.args
 
     assert 'init' in args
     assert args['PROJECT'] == Path(project_templates_path.strpath)

@@ -41,30 +41,33 @@ from .project import Project
 
 class CLI:
 
-    def __init__(self, args=None):
-        if args:
-            self.args = parse_args(args)
-
-    def parse_args(self, argv=None):
-        self.args = docopt(__doc__, version=__version__, argv=argv)
+    def __init__(self, args):
+        self.args = docopt(__doc__, version=__version__, argv=args)
+        self.args = MasonrySchema(self.args).validate()
 
     # def prompt_args(self):
     #     pass
 
-    def validate_args(self):
-        args = MasonrySchema(self.args).validate()
-        return args
+    # def validate_args(self):
+    #     args = MasonrySchema(self.args).validate()
+    #     return args
 
-    # def run():
+    def run(self):
+        pass
 
-    #     # args = prompt_vars(args)
+        # args = prompt_vars(args)
 
-    #     if self.args['init']:
-    #         project = Project(self.args['PROJECT'])
-    #         project.initialise(output_dir=self.args['--output'])
+        if self.args['init']:
+            project = Project(template_dir=self.args['PROJECT'])
+            project.initialise(output_dir=self.args['--output'], variables={})
+            self.project = project
 
-    #     elif self.args['init']:
-    #         pass
+        elif self.args['add']:
+            mason_file = self.args['--output'] / '.mason'
+            project = Project(mason_file=mason_file)
+            for template_name in self.args['TEMPLATE']:
+                project.add_template(template_name, variables={})
+            self.project = project
 
 
 class MasonrySchema:
@@ -77,8 +80,8 @@ class MasonrySchema:
 
         def check_mason_file_present(path):
             path = check_path(path)
-            path = path / '.mason'
-            path.resolve(strict=True)
+            mason_path = path / '.mason'
+            mason_path.resolve(strict=True)
             return path
 
         if args['init']:
@@ -95,7 +98,7 @@ class MasonrySchema:
             })
         elif args['add']:
             schema = Schema({
-                Optional('TEMPLATE'): Use(str),
+                Optional('TEMPLATE'): Or(str, list),
                 Optional('--output'): Use(
                     check_mason_file_present,
                     error='The .mason file was not detected for project. Specify location with --output option.'
