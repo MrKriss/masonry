@@ -1,4 +1,5 @@
 {
     "package_name": "testpackage",
-    "entry_point_name": "mytool"
+    "entry_point_name": "mytool",
+    "python_version": 3
 }
