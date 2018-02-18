@@ -73,7 +73,7 @@ class CombineFilePrefix(FilePreprocessor):
 
         with open(src, 'a') as fout:
             with open(dest) as fin:
-                fout.write('\n' + fin.read())
+                fout.write(fin.read())
         os.remove(fin.name)
         os.rename(fout.name, fin.name)
 
