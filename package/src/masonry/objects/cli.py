@@ -17,8 +17,6 @@ Usage:
 Arguments:
   PROJECT      URL/Filepath to directory for project type. Should contain
                subdiectories for all templates and a metadata.json file.
-               Can also specify a template subdirectory, and if so, this
-               is used as the template instead of the default for the project.
 
   TEMPLATE     Name of one or more templates to add to an existing project.
 
