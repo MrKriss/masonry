@@ -67,6 +67,8 @@ def test_can_create_project_with_default_template(project_templates_path, tmpdir
     assert project.applied_templates == ['first_layer']
     assert 'first_layer' not in project.remaining_templates
 
+    assert project.template_variables == variables
+
 
 def test_can_add_template_layer_after_default_template(project_templates_path, tmpdir):
 
@@ -96,6 +98,10 @@ def test_can_add_template_layer_after_default_template(project_templates_path, t
     assert project.applied_templates == ['first_layer', 'second_layer']
     assert 'first_layer' not in project.remaining_templates
     assert 'second_layer' not in project.remaining_templates
+
+    target = init_variables.copy()
+    target.update(second_layer_variables)
+    assert project.template_variables == target
 
 
 def test_can_resolve_template_order_and_apply_them(project_templates_path, tmpdir):
