@@ -53,21 +53,23 @@ class Project:
         )
 
         if masonry_config is None:
-            self.masonry_config = {}
+            self.masonry_config = {
+                'replay_dir': Path('~/.cookiecutter_replay/').expanduser().resolve()
+            }
         else:
             self.masonry_config = masonry_config
 
     def initialise(self, output_dir, variables):
 
         default_template_name = self.metadata['default']
-        default_template_path = self.template_directory / default_template_name
-        default_template = Template(default_template_path, variables)
+        output_dir, variables = self.render_template(
+            name=default_template_name,
+            variables=variables,
+            output_dir=output_dir
+        )
 
-        result = default_template.render(output_dir)
-
-        self.location = Path(result)
-        self.parent_dir = Path(result).parent
-
+        self.location = Path(output_dir)
+        self.parent_dir = Path(output_dir).parent
         self._update_and_save_state(default_template_name, variables)
 
     def add_template(self, name, variables):
@@ -79,17 +81,27 @@ class Project:
         for template in templates_to_apply:
             if template in self.applied_templates:
                 continue
-            self.render_template(template, variables)
+            output_dir, variables = self.render_template(template, variables)
             self._apply_postprocessing()
             self._update_and_save_state(template, variables)
 
-    def render_template(self, name, variables):
+    def render_template(self, name, variables, output_dir=None):
+
+        if not output_dir:
+            output_dir = self.parent_dir
 
         template_path = self.template_directory / name
         variables.update(self.template_variables)
 
         template = Template(template_path, variables)
-        template.render(output_dir=self.parent_dir)
+        output_path = template.render(output_dir=output_dir)
+
+        # Get rendered variables from replay contest
+        replay_file = self.masonry_config['replay_dir'] / f'{name}.json'
+        context = json.load(replay_file.open(encoding='utf-8'))
+        del context['cookiecutter']['_template']
+
+        return output_path, context['cookiecutter']
 
     def _apply_postprocessing(self):
 
