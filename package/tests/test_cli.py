@@ -29,3 +29,11 @@ def test_cli_init_arguments(project_templates_path, tmpdir):
     assert 'init' in args
     assert args['PROJECT'] == Path(project_templates_path.strpath)
     assert args['--output'] == Path(tmpdir.strpath)
+
+
+def test_cli_init_runs(project_templates_path, tmpdir):
+
+    argument_string = f"init {project_templates_path.strpath} -o {tmpdir.strpath}"
+
+    app = CLI(argument_string)
+    app.run()

@@ -31,6 +31,7 @@ from sys import exit
 from pathlib import Path
 
 from docopt import docopt
+import inquirer
 
 from .. import __version__
 
@@ -41,33 +42,109 @@ from .project import Project
 
 class CLI:
 
-    def __init__(self, args):
+    def __init__(self, args, config=None):
         self.args = docopt(__doc__, version=__version__, argv=args)
         self.args = MasonrySchema(self.args).validate()
 
-    # def prompt_args(self):
-    #     pass
+        if not config:
+            self.config = {
+                "application_data": "~/.masonry/",
+                "known_projects": {}
+            }
+        else:
+            self.config = config
 
-    # def validate_args(self):
-    #     args = MasonrySchema(self.args).validate()
-    #     return args
+    def _validate_args(self):
+        args = MasonrySchema(self.args).validate()
+        return args
 
     def run(self):
-        pass
 
-        # args = prompt_vars(args)
+        self.args = self._validate_args()
 
         if self.args['init']:
-            project = Project(template_dir=self.args['PROJECT'])
-            project.initialise(output_dir=self.args['--output'], variables={})
-            self.project = project
+            self.init_command()
 
         elif self.args['add']:
-            mason_file = self.args['--output'] / '.mason'
-            project = Project(mason_file=mason_file)
-            for template_name in self.args['TEMPLATE']:
-                project.add_template(template_name, variables={})
-            self.project = project
+            self.add_command()
+
+    def init_command(self, default_project=None):
+
+        if not self.args['PROJECT']:
+            self.args['PROJECT'] = self._prompt_init_project(default_project)
+
+        project = Project(template_dir=self.args['PROJECT'])
+        project.initialise(output_dir=self.args['--output'], variables={})
+        self.project = project
+
+    def add_command(self, default_template=None):
+
+        project_dir = Path(self.args['--output']).resolve()
+        mason_file = project_dir / '.mason'
+
+        if not mason_file.exists():
+            raise IOError(
+                f'A ".mason" file was not detected in the output directoty {project_dir}')
+
+        project = Project(mason_file=mason_file)
+
+        if not self.args['TEMPLATE']:
+            # inquire which template to use
+            self.args['TEMPLATE'] = self._prompt_add_template(project, default_template)
+
+        for template_name in self.args['TEMPLATE']:
+            project.add_template(template_name, variables={})
+
+        self.project = project
+
+    def _prompt_init_project(self, default=None):
+        """Return the choice of project to intialise"""
+
+        known_projects = list(self.config['known_projects'].keys())
+        known_projects.sort()
+
+        if not known_projects:
+            raise ValueError("No project specified and no recent projects to choose from.")
+
+        if default:
+            default_idx = known_projects.index(default)
+        else:
+            default_idx = 0
+
+        questions = [
+            inquirer.List('project',
+                          message="What project do you want to initialise?",
+                          choices=known_projects,
+                          default=default_idx)
+        ]
+        answers = inquirer.prompt(questions)
+
+        project_path = known_projects[answers['project']]
+
+        return project_path
+
+    def _prompt_add_template(self, project, default=None):
+        """Return the choice of templates to add"""
+
+        remaining_templates_names = project.remaining_templates
+
+        if default:
+            default_idx = known_projects.index(default)
+        else:
+            default_idx = 0
+
+        questions = [
+            inquirer.Checkbox('templates',
+                              message="What templates do you wish to add?",
+                              choices=remaining_templates_names,
+                              default=default_idx)
+        ]
+
+        answers = inquirer.prompt(questions)
+
+        templates = answers['templates']
+
+        return templates
 
 
 class MasonrySchema:
@@ -75,7 +152,8 @@ class MasonrySchema:
     def __init__(self, args):
 
         def check_path(path):
-            path = Path(path).expanduser().resolve(strict=True)
+            if path is not None:
+                path = Path(path).expanduser().resolve(strict=True)
             return path
 
         def check_mason_file_present(path):
@@ -117,147 +195,3 @@ class MasonrySchema:
             exit(e)
 
         return args
-
-
-# def validate_args(args):
-#     def template_path_exists(template):
-#         if template:
-#             template_path = os.path.join(args['PROJECT'], template)
-#             return os.path.exists(template_path)
-#         else:
-#             return True
-
-#     def mason_file_exists(output):
-#         mason_path = os.path.join(output, '.mason')
-#         return os.path.exists(mason_path)
-
-#     if args['init']:
-#         schema = Schema({
-#             # 'TEMPLATE': And(template_path_exists, error='TEMPLATE should be subdirectory of PROJECT'),
-#             # 'PROJECT': And(os.path.exists, error='PROJECT should exist'),
-#             str: object})
-
-#     elif args['add']:
-#         schema = Schema({
-#             # 'TEMPLATE': And(str, error='TEMPLATE should be specified'),
-#             # '--output': And(mason_file_exists, error='The .mason was not detected for project.'
-#             #                                          ' Specofy location with --output option.'),
-#             str: object})
-
-#     elif args['check']:
-#         schema = Schema({
-#             # 'TEMPLATE': And(str, error='TEMPLATE should be specified'),
-#             # '--output': And(mason_file_exists, error='The .mason was not detected for project.'
-#             #                                          ' Specofy location with --output option.'),
-#             str: object})
-#     try:
-#         args = schema.validate(args)
-#     except SchemaError as e:
-#         exit(e)
-
-
-# def parse_and_validate_args(argv):
-#     parsed_args = parse_args(argv)
-#     validate_args(parsed_args)
-#     return parsed_args
-
-
-# def parse_project_argument(arg):
-
-#     template = None
-
-#     # See if template directroy or project directory was specified
-#     project_argument = Path(arg).resolve()
-#     project_metadata = project_argument / 'metadata.json'
-
-#     if project_metadata.exists():
-#         project_dir = arg
-
-#     elif (project_argument.parent / 'metadata.json').exists():
-#         # Check parent directory and use sub directory as template
-#         project_dir = project_argument.parent.as_posix()
-#         template = project_argument.name
-
-#     return project_dir, template
-
-
-# # from argparse import ArgumentParser
-
-
-# # class CLI:
-
-# #     def __init__(self):
-# #         pass
-
-# #     def parse_arguments(self, arguments):
-# #         pass
-
-
-# # import argparse
-# # from pathlib import Path
-
-# # def create_parser():
-
-# #     parser = argparse.ArgumentParser(prog='Masonry')
-
-# #     parser.add_argument('--version', action='store_true', help='foo help')
-
-# #     subparsers = parser.add_subparsers(
-# #         title='subcommands', description='valid subcommands', help='sub-command help'
-# #     )
-
-# # # create the parser for the "init" command
-# # parser_a = subparsers.add_parser('init', help='initialise a new project')
-# # parser_a.add_argument('project',
-# #                       type=check_path,
-# #                       required=False,
-# #                       help='URL/Filepath to directory for project type. Should contain'
-# #                            'subdiectories for all templates and a metadata.json file.')
-
-
-# # def parse_args(argv=None):
-# #     args = docopt(__doc__, version=__version__, argv=argv)
-# #     return args
-
-
-# # def validate_args(args):
-# #     def template_path_exists(template):
-# #         if template:
-# #             template_path = os.path.join(args['PROJECT'], template)
-# #             return os.path.exists(template_path)
-# #         else:
-# #             return True
-
-# #     def mason_file_exists(output):
-# #         mason_path = os.path.join(output, '.mason')
-# #         return os.path.exists(mason_path)
-
-# #     if args['init']:
-# #         schema = Schema({
-# #             # 'TEMPLATE': And(template_path_exists, error='TEMPLATE should be subdirectory of PROJECT'),
-# #             # 'PROJECT': And(os.path.exists, error='PROJECT should exist'),
-# #             str: object})
-
-# #     elif args['add']:
-# #         schema = Schema({
-# #             # 'TEMPLATE': And(str, error='TEMPLATE should be specified'),
-# #             # '--output': And(mason_file_exists, error='The .mason was not detected for project.'
-# #             #                                          ' Specofy location with --output option.'),
-# #             str: object})
-
-# #     elif args['check']:
-# #         schema = Schema({
-# #             # 'TEMPLATE': And(str, error='TEMPLATE should be specified'),
-# #             # '--output': And(mason_file_exists, error='The .mason was not detected for project.'
-# #             #                                          ' Specofy location with --output option.'),
-# #             str: object})
-# #     try:
-# #         args = schema.validate(args)
-# #     except SchemaError as e:
-# #         exit(e)
-
-
-# # def parse_and_validate_args(argv):
-# #     parsed_args = parse_args(argv)
-# #     validate_args(parsed_args)
-# #     return parsed_args
