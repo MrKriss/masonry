@@ -99,7 +99,7 @@ class App:
         remaining_templates_names = project.remaining_templates
 
         if default:
-            default_idx = known_projects.index(default)
+            default_idx = remaining_templates_names.index(default)
         else:
             default_idx = 0
 
@@ -112,9 +112,9 @@ class App:
 
         answers = inquirer.prompt(questions)
 
-        templates = answers['templates']
+        template_name = remaining_templates_names[answers['templates']]
 
-        return templates
+        return template_name
 
     def _update_known_projects(self, project):
 

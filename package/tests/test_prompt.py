@@ -20,7 +20,7 @@ def config(tmpdir, project_templates_path):
     config = {
         "application_data": tmpdir.join('application_data').strpath,
         "known_projects": {
-            "simple_project": project_templates_path,
+            "simple_project": project_templates_path.strpath,
             "data_science": "another/path/here"
         },
     }
@@ -49,3 +49,15 @@ def test_cli_init_prompt(project_templates_path, config, tmpdir):
     project_name = app._prompt_init_project(default="simple_project")
 
     assert project_name == 'simple_project'
+
+
+def test_cli_add_prompt(project_templates_path, config, tmpdir):
+
+    # Given an initialised project
+    argument_string = f"init {project_templates_path.strpath} -o {tmpdir.strpath}"
+    app = App(argument_string, config=config)
+    app.run()
+
+    template_name = app._prompt_add_template(app.project, default="third_layer")
+
+    assert template_name == 'third_layer'
