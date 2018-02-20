@@ -2,7 +2,7 @@
 import pytest
 import py
 
-from masonry.objects.cli import CLI
+from masonry.objects.app import App
 
 
 @pytest.fixture
@@ -44,8 +44,7 @@ def test_cli_init_prompt(project_templates_path, config, tmpdir):
 
     # Given just the init command
     argument_string = f"init -o {tmpdir.strpath}"
-    app = CLI(argument_string, config=config)
-    args = app._validate_args()
+    app = App(argument_string, config=config)
 
     project_name = app._prompt_init_project(default="simple_project")
 

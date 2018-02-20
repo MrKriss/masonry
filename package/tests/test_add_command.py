@@ -7,7 +7,7 @@ import os
 
 from conftest import TEST_DIR
 
-from masonry.objects.cli import CLI
+from masonry.objects.app import App
 
 
 @pytest.fixture()
@@ -20,7 +20,7 @@ def init_project_path(tmpdir):
     # Set arguments
     args = f"init -o {temp_output_path} {template_path}"
 
-    app = CLI(args=args)
+    app = App(args=args)
     app.run()
 
     return app.project.location
@@ -31,7 +31,7 @@ def test_adding_single_project(init_project_path):
     # Set arguments
     args = f"add -o {init_project_path.as_posix()} pytest"
 
-    app = CLI(args=args)
+    app = App(args=args)
     app.run()
 
     # Check files were created
@@ -79,7 +79,7 @@ def test_adding_multiple_projects(init_project_path):
     # Set arguments
     args = f"add -o {init_project_path.as_posix()} conda"
 
-    app = CLI(args=args)
+    app = App(args=args)
     app.run()
 
     # Check files were created

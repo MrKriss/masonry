@@ -5,7 +5,7 @@ import py
 
 from pathlib import Path
 
-from masonry.objects.cli import CLI
+from masonry.objects.app import App
 
 from schema import SchemaError
 
@@ -23,7 +23,7 @@ def test_cli_init_arguments(project_templates_path, tmpdir):
 
     argument_string = f"init {project_templates_path.strpath} -o {tmpdir.strpath}"
 
-    app = CLI(argument_string)
+    app = App(argument_string)
     args = app.args
 
     assert 'init' in args
@@ -35,5 +35,5 @@ def test_cli_init_runs(project_templates_path, tmpdir):
 
     argument_string = f"init {project_templates_path.strpath} -o {tmpdir.strpath}"
 
-    app = CLI(argument_string)
+    app = App(argument_string)
     app.run()

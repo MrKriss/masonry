@@ -6,7 +6,7 @@ import json
 
 from conftest import TEST_DIR
 
-from masonry.objects.cli import CLI
+from masonry.objects.app import App
 
 
 def test_init_with_project(tmpdir):
@@ -16,7 +16,7 @@ def test_init_with_project(tmpdir):
     # Set arguments
     args = f"init -o {output_path} {TEST_DIR}/example_templates/python_project"
 
-    app = CLI(args=args)
+    app = App(args=args)
     app.run()
 
     # Check files were created
