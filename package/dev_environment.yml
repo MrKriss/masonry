@@ -11,6 +11,7 @@ dependencies:
   - docopt
   - gitpython
   - clint
+  - flake8
 
   # Testing 
   - pytest
