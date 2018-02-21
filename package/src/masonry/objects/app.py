@@ -19,11 +19,9 @@ class App:
         else:
             self.config = config
 
-        app_data_dir = Path(self.config['application_data']).expanduser().resolve()
-        if not app_data_dir.exists():
-            app_data_dir.mkdir()
-
-        self.app_data_dir = app_data_dir
+        self.app_data_dir = Path(self.config['application_data']).expanduser().resolve()
+        if not self.app_data_dir.exists():
+            self.app_data_dir.mkdir()
 
         self.cli = CLI(args)
         self.args = self.cli._validate_args()
@@ -42,7 +40,13 @@ class App:
             self.args['PROJECT'] = self._prompt_init_project(default_project)
 
         project = Project(template_dir=self.args['PROJECT'])
-        project.initialise(output_dir=self.args['--output'], variables={})
+
+        variables = self._prompt_cookiecutter_variables(
+            project=project,
+            template_name=project.metadata['default']
+        )
+
+        project.initialise(output_dir=self.args['--output'], variables=variables)
         self.project = project
 
         self._update_known_projects(project)
@@ -63,7 +67,12 @@ class App:
             self.args['TEMPLATE'] = self._prompt_add_template(project, default_template)
 
         for template_name in self.args['TEMPLATE']:
-            project.add_template(template_name, variables={})
+
+            variables = self._prompt_cookiecutter_variables(
+                project=project,
+                template_name=template_name
+            )
+            project.add_template(template_name, variables=variables)
 
         self.project = project
 
@@ -116,6 +125,39 @@ class App:
 
         return template_name
 
+    def _prompt_cookiecutter_variables(self, project, template_name):
+
+        cookiecutter_vars_path = project.template_directory / template_name / "cookiecutter.json"
+
+        with cookiecutter_vars_path.open() as f:
+            cookiecutter_vars = json.load(f)
+
+        # Construct list of questions for variables without a value
+        questions = []
+        for key, value in cookiecutter_vars.items():
+
+            if key not in project.template_variables:
+
+                var_name = key.replace("_", " ").title()
+
+                if isinstance(value, (str, int, float, bool)):
+                    questions.append(
+                        inquirer.Text(key,
+                                      message=f"Please specify '{var_name}'",
+                                      default=value)
+                    )
+                elif isinstance(value, list):
+                    questions.append(
+                        inquirer.List(key,
+                                      message=f"Please specify '{var_name}'",
+                                      default=value[0],
+                                      choices=value)
+                    )
+
+        answers = inquirer.prompt(questions)
+
+        return answers
+
     def _update_known_projects(self, project):
 
         project_name = project.template_directory.parent.name
@@ -125,4 +167,4 @@ class App:
         known_projects_path = self.app_data_dir / 'known_projects.json'
 
         with known_projects_path.open('w', encoding='utf-8') as f:
-            data = json.dump(self.config['known_projects'], f)
+            json.dump(self.config['known_projects'], f)
