@@ -2,7 +2,6 @@
 """
 
 import ast
-import fnmatch
 import os
 from pathlib import Path
 
@@ -86,9 +85,9 @@ class CombineFilePostfix(FilePreprocessor):
         super().__init__(pattern=pattern)
 
     def process(self, src, dest):
-        """ Add the content of src to the end of dest file and remove src file. 
+        """ Add the content of src to the end of dest file and remove src file.
 
-        Return the updated filename 
+        Return the updated filename
         """
 
         with open(dest, 'a') as fout:
@@ -185,8 +184,9 @@ class CombineCodePrefix(CodePreprocessor):
         func_class_pos = [x == ast.FunctionDef or x == ast.ClassDef for x in node_types]
         import_pos = [x == ast.Import or x == ast.ImportFrom for x in node_types]
 
-        docstring_present = (isinstance(node_types[0], ast.Expr)
-                             and isinstance(node_types[0].value, ast.Str))
+        docstring_present = (
+            isinstance(node_types[0], ast.Expr) and isinstance(node_types[0].value, ast.Str)
+        )
         constants_pos = [isinstance(elem, ast.Assign) and elem.targets[0].id.isupper()
                          for elem in module_ast.body]
 
@@ -226,8 +226,8 @@ class CombineCodePostfix(CodePreprocessor):
     def _find_insertion_idx(self, module_ast):
         """Return postfix insertion point.
 
-        This is the point in the code after any functions or classes are defined, but before the ifname
-        statement if present.
+        This is the point in the code after any functions or classes are defined, but before the
+        ifname statement if present.
         """
 
         # Inspect ast types present

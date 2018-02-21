@@ -26,16 +26,13 @@ Options:
   --version            Show version.
   -v                   Increase verbosity of output
 """
-import os
-from sys import exit
 from pathlib import Path
+from sys import exit
 
 from docopt import docopt
-import inquirer
+from schema import Optional, Or, Schema, SchemaError, Use
 
 from .. import __version__
-
-from schema import Schema, And, Or, Use, Optional, SchemaError
 
 
 class CLI:
@@ -81,7 +78,8 @@ class MasonrySchema:
                 Optional('TEMPLATE'): Or(str, list),
                 Optional('--output'): Use(
                     check_mason_file_present,
-                    error='The .mason file was not detected for project. Specify location with --output option.'
+                    error='The .mason file was not detected for project. '
+                          'Specify location with --output option.'
                 ),
                 str: object}
             )

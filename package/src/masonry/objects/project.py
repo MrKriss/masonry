@@ -1,19 +1,18 @@
-from pathlib import Path
-import os
 import json
+import os
+from pathlib import Path
+
 import git
 
-from .template import Template
-
+from .postprocessors import CombineFilePostfix, CombineFilePrefix
 from .resolution import DependencyGraph
-from ..prompt import prompt_cookiecutter_variables
-
-from .postprocessors import CombineFilePrefix, CombineFilePostfix
+from .template import Template
 
 
 class Project:
 
-    def __init__(self, template_dir=None, mason_file=None, masonry_config=None, interactive=False, use_git=False):
+    def __init__(self, template_dir=None, mason_file=None, masonry_config=None,
+                 interactive=False, use_git=False):
 
         if template_dir:
             self.template_directory = Path(template_dir).resolve()

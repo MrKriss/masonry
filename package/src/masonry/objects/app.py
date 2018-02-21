@@ -1,7 +1,7 @@
 import json
+from pathlib import Path
 
 import inquirer
-from pathlib import Path
 
 from .cli import CLI
 from .project import Project
