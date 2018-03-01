@@ -43,7 +43,7 @@ class Preprocessor:
 
         filenames = [f for f in filenames if f.is_file()]
         if self.exclude:
-            filenames = [f for f in filenames if f.suffix not in self.exclude]
+            filenames = [f for f in filenames if not f.suffix or f.suffix not in self.exclude]
         if self.only:
             filenames = [f for f in filenames if f.suffix in self.only]
 
