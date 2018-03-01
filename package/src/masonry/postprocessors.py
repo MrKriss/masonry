@@ -5,7 +5,7 @@ import ast
 import os
 from pathlib import Path
 
-from ..utils import rindex
+from .utils import rindex
 
 
 class Preprocessor:

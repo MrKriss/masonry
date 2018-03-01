@@ -6,7 +6,7 @@ import json
 
 from conftest import TEST_DIR
 
-from masonry.objects.app import App
+from masonry.app import App
 
 
 def test_init_with_project(tmpdir):

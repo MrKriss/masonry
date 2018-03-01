@@ -6,7 +6,7 @@ import json
 import os
 
 from conftest import TEST_DIR
-from masonry.objects.project import Project
+from masonry.project import Project
 
 from cookiecutter.exceptions import FailedHookException, UndefinedVariableInTemplate
 

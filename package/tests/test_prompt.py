@@ -2,7 +2,7 @@
 import pytest
 import py
 
-from masonry.objects.app import App
+from masonry.app import App
 
 
 @pytest.fixture

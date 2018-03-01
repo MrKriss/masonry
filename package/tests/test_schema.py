@@ -1,7 +1,7 @@
 
 from pathlib import Path
 
-from masonry.objects.cli import MasonrySchema
+from masonry.cli import MasonrySchema
 
 
 import pytest

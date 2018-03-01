@@ -5,6 +5,7 @@ import inquirer
 
 from .cli import CLI
 from .project import Project
+from .utils import setup_logger
 import py
 
 
@@ -12,31 +13,47 @@ class App:
 
     def __init__(self, args, config=None):
 
+        self.cli = CLI(args)
+        self.args = self.cli._validate_args()
+
+        if self.args['-v']:
+            self.logger = setup_logger(logfile=None, level='DEBUG')
+        else:
+            self.logger = setup_logger(logfile=None, level='INFO')
+
+        self.logger.debug(f'Passed Arguments: {args}')
+
         if not config:
             self.config = {
                 "application_data": "~/.masonry/",
                 "known_projects": {}
             }
+            self.logger.info(f'Using default config: {self.config}')
+
         else:
             self.config = config
 
         self.app_data_dir = Path(self.config['application_data']).expanduser().resolve()
         if not self.app_data_dir.exists():
             self.app_data_dir.mkdir()
-
-        self.cli = CLI(args)
-        self.args = self.cli._validate_args()
+            self.logger.info(f'Created Application directory: {self.app_data_dir}')
 
     def run(self):
 
         if self.args['init']:
+            self.logger.debug(f'Started init command')
             self.init_command()
+            self.logger.debug(f'Finished init command')
 
         elif self.args['add']:
+            self.logger.debug(f'Started add command')
             self.add_command()
+            self.logger.debug(f'Finished add command')
 
         elif self.args['check']:
+            self.logger.debug(f'Started check command')
             self.check_command()
+            self.logger.debug(f'Finished check command')
 
     def init_command(self, default_project=None):
 
@@ -49,6 +66,7 @@ class App:
             project=project,
             template_name=project.metadata['default']
         )
+        self.logger.info(f'Template Variables: {variables}')
 
         project.initialise(output_dir=self.args['--output'], variables=variables)
         self.project = project
@@ -210,8 +228,12 @@ class App:
 
     def _update_known_projects(self, project):
 
+        self.logger.debug(f'Previous Known Projects: {self.config["known_projects"]}')
+
         project_name = project.template_directory.parent.name
         self.config['known_projects'][project_name] = str(project.template_directory)
+
+        self.logger.debug(f'Updated Known Projects: {self.config["known_projects"]}')
 
         # Write to output
         known_projects_path = self.app_data_dir / 'known_projects.json'

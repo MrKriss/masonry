@@ -6,7 +6,7 @@ import itertools
 
 from conftest import TEST_DIR
 
-from masonry.objects.postprocessors import (
+from masonry.postprocessors import (
     CombineFilePrefix,
     CombineFilePostfix,
     CombineCodePrefix,

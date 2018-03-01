@@ -5,7 +5,7 @@ import py
 
 from pathlib import Path
 
-from masonry.objects.app import App
+from masonry.app import App
 
 from schema import SchemaError
 

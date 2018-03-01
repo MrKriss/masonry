@@ -1,6 +1,6 @@
 
 import pytest
-from masonry.objects.template import Template
+from masonry.template import Template
 from pathlib import Path
 import py.path
 

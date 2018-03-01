@@ -7,7 +7,7 @@ import os
 
 from conftest import TEST_DIR
 
-from masonry.objects.app import App
+from masonry.app import App
 
 
 @pytest.fixture()
