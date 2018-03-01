@@ -1,5 +1,4 @@
 """Handle dependeny resolutions"""
-import json
 
 
 class DependencyGraph:
