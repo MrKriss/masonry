@@ -83,6 +83,14 @@ class MasonrySchema:
                 ),
                 str: object}
             )
+        elif args['check']:
+            schema = Schema({
+                Optional('PROJECT'): Use(
+                    check_path,
+                    error='Supplied PROJECT path does not exist.'
+                ),
+                str: object}
+            )
 
         self.schema = schema
         self.args = args

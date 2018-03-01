@@ -5,6 +5,7 @@ import inquirer
 
 from .cli import CLI
 from .project import Project
+import py
 
 
 class App:
@@ -33,6 +34,9 @@ class App:
 
         elif self.args['add']:
             self.add_command()
+
+        elif self.args['check']:
+            self.check_command()
 
     def init_command(self, default_project=None):
 
@@ -75,6 +79,52 @@ class App:
             project.add_template(template_name, variables=variables)
 
         self.project = project
+
+    def check_command(self, default_project=None):
+
+        if not self.args['PROJECT']:
+            self.args['PROJECT'] = self._prompt_init_project(default_project)
+
+        project = Project(template_dir=self.args['PROJECT'])
+
+        default_template = project.metadata['default']
+
+        template_orders = {}
+        for layer in project.remaining_templates:
+            if layer != default_template:
+                dependencies = project._g.get_dependencies(layer)
+                dependencies = [x for x in dependencies if x != default_template]
+                template_orders[layer] = dependencies
+
+        tmpdir = py.path.local.mkdtemp().mkdir('check')
+        self.check_dir = tmpdir
+
+        error_log = []
+
+        for layer, deps in template_orders.items():
+
+            project = Project(template_dir=self.args['PROJECT'])
+
+            output_dir = tmpdir.mkdir(layer)
+            print(f'Testing Layer: {layer}')
+            print(f'Installing: {deps}')
+
+            project.initialise(output_dir=output_dir, variables={})
+
+            for dep in deps:
+                try:
+                    print(f'Adding layer: {dep}')
+                    project.add_template(name=dep, variables={})
+                except Exception as e:
+                    msg = f'{e} encountered on adding "{dep}" to project for layer "{layer}"'
+                    error_log.append(msg)
+
+        if error_log:
+            print("Errors were encountered:")
+            for err in error_log:
+                print(err)
+        else:
+            print("All template layers created without error")
 
     def _prompt_init_project(self, default=None):
         """Return the choice of project to intialise"""
