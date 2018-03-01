@@ -47,6 +47,41 @@ def test_combine_file_snippets_postprocessor_postfix(tmpdir):
     shutil.rmtree(str(dest_path))
 
 
+def test_combine_file_snippets_postprocessor_postfix_no_file_suffix(tmpdir):
+
+    # GIVEN a directory of files, with *_post and *_prefixes that match other named files.
+    TEST_DATA = TEST_DIR / Path('example_templates/python_project/')
+    input_files = [
+        TEST_DATA / Path(r'pytest/{{cookiecutter.package_name}}/Makefile'),
+        TEST_DATA / Path(r'conda/{{cookiecutter.package_name}}/Makefile_postfix')
+    ]
+    # Use a temporary directory for the processing
+    dest_path = Path(tmpdir.strpath) / 'postprocessing'
+    dest_path.mkdir()
+    for fp in input_files:
+        shutil.copy(str(fp), str(dest_path))
+
+    # WHEN combining files using the postprocessing rules
+    postprocessor = CombineFilePostfix(pattern='_postfix')
+    postprocessor.apply(dest_path)
+
+    # THEN File should be concatonated
+    file1_text = input_files[0].read_text()
+    file2_text = input_files[1].read_text()
+
+    result_path = dest_path / 'Makefile'
+    result = result_path.read_text()
+    assert result[:len(file1_text)] == file1_text
+    assert result[len(file1_text):] == file2_text
+
+    # THEN *_prefix and *_postfix files hould be removed as part of the processing
+    config_file_present = (result_path / 'Makefile_postfix').exists()
+    assert not config_file_present
+
+    # CLEANUP
+    shutil.rmtree(str(dest_path))
+
+
 def test_combine_file_snippets_postprocessor_prefix(tmpdir):
 
     # GIVEN a directory of files, with *_post and *_prefixes that match other named files.
