@@ -7,7 +7,7 @@ Install new libraries according to dev_environment.yml
 from pathlib import Path
 import shutil
 
-from masonry.utils import run_and_capture
+from masonry.hook_utils import run_and_capture
 from clint.textui import indent, colored, puts
 
 
