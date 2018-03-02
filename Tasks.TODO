@@ -8,6 +8,7 @@ Features to Reimpliment:
     ✔ Input validation @done (2/20/2018, 11:08:50 PM)
     ✔ Checking all the templates render ok @done (2018-3-1 20:43:29)
     ☐ Add useful feedback messages/prompt progress visuals during execution on CLI
+    ☐ Move templates to seperate repository
 
 Bugs:
     ✔ Need to remove /_postfix file once used @done (9/9/2017, 8:52:55 PM)
