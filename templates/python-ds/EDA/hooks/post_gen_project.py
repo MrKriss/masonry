@@ -3,7 +3,7 @@
 """
 
 from clint.textui import indent, puts
-from masonry.utils import run_and_capture
+from masonry.hook_utils import run_and_capture
 
 # The string in these variables will be overriden by cookiecutter
 PROJECT_NAME = "{{cookiecutter.project_name|lower|replace(' ', '_')}}"
