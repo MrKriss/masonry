@@ -88,7 +88,7 @@ setup(
 
     # Entry Point for the command line application
     entry_points={
-        'console_scripts': ['mason=masonry.main:main']
+        'console_scripts': ['mason=masonry.app:main']
     },
     license='MIT',
     classifiers=[

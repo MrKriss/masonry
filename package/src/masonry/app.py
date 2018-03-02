@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+import sys
 
 import inquirer
 
@@ -240,3 +241,14 @@ class App:
 
         with known_projects_path.open('w', encoding='utf-8') as f:
             json.dump(self.config['known_projects'], f)
+
+
+def main(args=None):
+    if not args:
+        args = sys.argv[1:]
+    app = App(args)
+    app.run()
+
+
+if __name__ == '__main__':
+    main()
